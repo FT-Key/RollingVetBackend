@@ -166,7 +166,7 @@ class Server {
   middlewares() {
     // MiddleWare
     const corsOptions = {
-      origin: 'http://localhost:5173', // Permitir solicitudes desde este origen
+      origin: ['http://localhost:5173', 'https://deploy-preview-1--reactfrontendtemplates.netlify.app'], // Permitir solicitudes desde estos orígenes
       methods: 'GET,POST,PUT,DELETE', // Métodos permitidos
       allowedHeaders: 'Content-Type,Authorization', // Encabezados permitidos
     };
