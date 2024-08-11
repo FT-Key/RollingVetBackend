@@ -165,7 +165,12 @@ class Server {
 
   middlewares() {
     // MiddleWare
-    this.app.use(cors());
+    const corsOptions = {
+      origin: 'http://localhost:5173', // Permitir solicitudes desde este origen
+      methods: 'GET,POST,PUT,DELETE', // Métodos permitidos
+      allowedHeaders: 'Content-Type,Authorization', // Encabezados permitidos
+    };
+    this.app.use(cors(corsOptions));
     this.app.use(express.json());
   }
 
