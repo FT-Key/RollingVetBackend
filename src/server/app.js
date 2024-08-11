@@ -8,7 +8,7 @@ import googleAuthRouter from '../googleAuth.js';
 class Server {
   constructor(puerto) {
     this.app = express();
-    this.port = puerto;
+    this.port = process.env.PORT || puerto;
     this.middlewares();
     this.rutas();
   }
