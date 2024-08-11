@@ -30,7 +30,7 @@ class Server {
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Document</title>
+          <title>Server</title>
           <style>
             * {
               margin: 0;
@@ -73,7 +73,7 @@ class Server {
               top: 0;
               left: -100%;
               width: 100%;
-              height: 40px;
+              height: 30px;
               background: linear-gradient(90deg, transparent, var(--color));
               animation: animate1 1s linear infinite;
               animation-delay: 0s;
@@ -93,7 +93,7 @@ class Server {
               bottom: 0;
               right: -100%;
               width: 100%;
-              height: 40px;
+              height: 30px;
               background: linear-gradient(270deg, transparent, var(--color));
               animation: animate3 1s linear infinite;
               animation-delay: 0s;
@@ -113,7 +113,7 @@ class Server {
               right: 0;
               top: -100%;
               height: 100%;
-              width: 40px;
+              width: 30px;
               background: linear-gradient(180deg, transparent, var(--color));
               animation: animate2 1s linear infinite;
               animation-delay: .5s;
@@ -133,7 +133,7 @@ class Server {
               left: 0;
               bottom: -10%;
               height: 100%;
-              width: 40px;
+              width: 30px;
               background: linear-gradient(360deg, transparent, var(--color));
               animation: animate4 1s linear infinite;
               animation-delay: .5s;
