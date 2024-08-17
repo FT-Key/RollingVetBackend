@@ -4,7 +4,7 @@ import {
   postProductoService,
   putProductoService,
   deleteProductoService
-} from '../services/productos.services.js';
+} from '../services/productos.service.js';
 
 export const getProductos = async (req, res) => {
   try {

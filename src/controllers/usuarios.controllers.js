@@ -4,7 +4,7 @@ import {
   postUsuarioService,
   putUsuarioService,
   deleteUsuarioService
-} from '../services/usuarios.services.js';
+} from '../services/usuarios.service.js';
 
 export const getUsuarios = async (req, res) => {
   try {

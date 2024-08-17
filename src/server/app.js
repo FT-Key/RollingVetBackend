@@ -3,7 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import productosRouter from '../routes/productos.routes.js';
 import usuariosRouter from '../routes/usuarios.routes.js';
-import googleAuthRouter from '../googleAuth.js';
+import loginRouter from '../routes/login.routes.js';
+import registerRouter from '../services/register.service.js';
 
 class Server {
   constructor(puerto) {
@@ -17,7 +18,8 @@ class Server {
     // Usar las rutas definidas en productos.js
     this.app.use('/productos', productosRouter);
     this.app.use('/usuarios', usuariosRouter);
-    this.app.use('/auth', googleAuthRouter);
+    this.app.use('/login', loginRouter);
+    this.app.use('/register', registerRouter);
     this.app.get('/api/hello', (req, res) => {
       res.json({ message: 'Hello from the server!' });
     });

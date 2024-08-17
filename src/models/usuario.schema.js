@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Schema, model } from 'mongoose';
 
 const IDIOMAS = ['Español', 'Inglés', 'Francés', 'Alemán', 'Italiano'];
@@ -53,8 +54,8 @@ const UsuarioSchema = new Schema({
   contrasenia: { type: String, required: true },
   login: { type: Boolean, default: false },
   bloqueado: { type: Boolean, default: false },
-  tipoLogueo: { type: String, enum: ['normal', 'google'], default: 'normal' },
-  verificacionEmail: { type: Boolean, default: true },
+  tipoRegistro: { type: String, enum: ['normal', 'google'], default: 'normal' },
+  verificacionEmail: { type: Boolean, default: false },
   nombre: { type: String },
   apellido: { type: String },
   fechaNacimiento: { type: Date },
@@ -73,7 +74,9 @@ const UsuarioSchema = new Schema({
   estadoSuscripcion: { type: String, enum: ESTADOS_SUSCRIPCION, default: 'Gratis' },
   notificaciones: { type: NotificacionesSchema },
   autenticacionDosFactores: { type: Boolean },
-  region: { type: String, enum: REGIONES }
+  region: { type: String, enum: REGIONES },
+  idCarrito: { type: mongoose.Schema.Types.ObjectId, ref: 'cart' }, // Referencia al carrito
+  idFavoritos: { type: mongoose.Schema.Types.ObjectId, ref: 'fav' }, // Referencia a favoritos
 });
 
 const Usuario = model('Usuario', UsuarioSchema);
