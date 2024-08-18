@@ -1,4 +1,4 @@
-import { googleLoginService, loginService } from '../services/login.service.js';
+import { googleLoginService, loginService } from "../services/login.service.js";
 
 export const postLogin = async (req, res) => {
   try {
@@ -9,7 +9,9 @@ export const postLogin = async (req, res) => {
     } else {
       result = await googleLoginService(usuarioData);
     }
-    return res.status(result.statusCode).json({ msg: result.mensaje, nuevoUsuario: result.nuevoUsuario });
+    return res
+      .status(result.statusCode)
+      .json({ msg: result.mensaje, nuevoUsuario: result.nuevoUsuario });
   } catch (error) {
     return res.status(500).json({ msg: "Error interno del servidor." });
   }
