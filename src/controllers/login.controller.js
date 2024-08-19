@@ -7,11 +7,12 @@ export const postLogin = async (req, res) => {
     if (usuarioData.contrasenia) {
       result = await loginService(usuarioData);
     } else {
-      result = await googleLoginService(usuarioData);
+      const token = usuarioData.token; // Extrae el token del cuerpo de la solicitud
+      result = await googleLoginService(token); // Pasa el token directamente
     }
     return res
       .status(result.statusCode)
-      .json({ msg: result.mensaje, nuevoUsuario: result.nuevoUsuario });
+      .json({ msg: result.mensaje, token: result.token});
   } catch (error) {
     return res.status(500).json({ msg: "Error interno del servidor." });
   }

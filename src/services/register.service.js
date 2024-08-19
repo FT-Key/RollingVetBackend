@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getUsuariosService, postUsuarioService } from "./usuarios.service.js";
 import { encryptPassword } from "../utils/register.utils.js";
+import { generateJwtToken } from "../utils/login.utils.js";
 
 const router = Router();
 
@@ -17,8 +18,8 @@ export async function registerService(userData) {
       return res.status(400).json({ error: "Las contraseñas no coinciden" });
     }
 
-    const usuariosResult = await getUsuariosService();
-    const usuarios = usuariosResult.usuarios;
+    const usuariosResponse = await getUsuariosService();
+    const usuarios = usuariosResponse.usuarios;
 
     const nombreUsuarioEncontrado = usuarios.some(
       (u) => u.nombreUsuario === nombreDeUsuario
@@ -65,32 +66,30 @@ export async function registerService(userData) {
   }
 }
 
-export async function googleRegisterService(req, res) {
-  const { token } = req.body;
-
+export async function googleRegisterService(token) {
   try {
     // Verificar el token con Google
     const responseGoogle = await fetch(
       `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
     );
     const userInfo = await responseGoogle.json();
-    console.log("Informacion del usuario", userInfo);
 
     if (userInfo.error) {
-      return res.status(400).json({ error: "Token inválido" });
+      return { statusCode: 400, mensaje: "Token inválido" };
     }
 
-    const usuarios = await getUsuariosService();
+    const usuariosResponse = await getUsuariosService();
+    const usuarios = usuariosResponse.usuarios; // Accede al array dentro del objeto
 
     const usuario = usuarios.some((u) => u.email === userInfo.email);
 
     if (usuario) {
-      return res.status(404).json({ error: "Usuario ya existente" });
+      return { statusCode: 404, mensaje: "Usuario ya existente" };
     }
 
     const nuevaId = usuarios[usuarios.length - 1].id + 1 || 1;
     let nuevoNombreUsuario;
-    let index = 0;
+    let index = nuevaId - 1;
     let existeUsuario;
 
     while (true) {
@@ -106,7 +105,8 @@ export async function googleRegisterService(req, res) {
     }
 
     // Hashear la contraseña (userInfo.sub en este caso)
-    const contraseniaHasheada = await encryptPassword(userInfo.sub);
+    const userSubString = String(userInfo.sub).trim();
+    const contraseniaHasheada = await encryptPassword(userSubString);
 
     const nuevoUsuarioData = {
       id: nuevaId,
@@ -125,12 +125,18 @@ export async function googleRegisterService(req, res) {
 
     const response = await postUsuarioService(nuevoUsuarioData);
 
-    return res
-      .status(response.statusCode)
-      .json({ msg: response.mensaje, nuevoUsuario: response.nuevoUsuario });
+    // Emitir una sesión o token JWT
+    const jwtToken = generateJwtToken(response.nuevoUsuario);
+
+    return {
+      statusCode: response.statusCode,
+      token: jwtToken,
+      mensaje: response.mensaje,
+      nuevoUsuario: response.nuevoUsuario,
+    };
   } catch (error) {
     console.error("Error en googleRegisterService", error);
-    return res.status(500).json({ error: "Error al verificar el token" });
+    return { statusCode: 500, mensaje: "Error al verificar el token" };
   }
 }
 

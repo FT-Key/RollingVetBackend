@@ -26,17 +26,10 @@ export const getUsuarioService = async (idUsuario) => {
   }
 };
 
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 export const postUsuarioService = async (nuevoUsuarioData) => {
-  // Hashear la contraseña antes de crear el usuario
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(nuevoUsuarioData.contrasenia, saltRounds);
-
-  // Reemplazar la contraseña en los datos del nuevo usuario con la contraseña hasheada
-  nuevoUsuarioData.contrasenia = hashedPassword;
-
-  // Crear el usuario con la contraseña hasheada
+  // Crear el usuario
   const nuevoUsuario = new UserModel(nuevoUsuarioData);
 
   // Crear el carrito y favoritos asociados al nuevo usuario
@@ -44,11 +37,11 @@ export const postUsuarioService = async (nuevoUsuarioData) => {
   const favoritos = new FavModel({ idUsuario: nuevoUsuario._id });
   await carrito.save();
   await favoritos.save();
-  
+
   // Asignar los IDs de carrito y favoritos al usuario
   nuevoUsuario.idCarrito = carrito._id;
   nuevoUsuario.idFavoritos = favoritos._id;
-  
+
   // Guardar el usuario en la base de datos
   await nuevoUsuario.save();
 
@@ -60,10 +53,9 @@ export const postUsuarioService = async (nuevoUsuarioData) => {
 };
 
 export const putUsuarioService = async (idUsuario, usuarioData) => {
-
   const usuarioActualizado = await UserModel.findOneAndUpdate(
     { _id: idUsuario },
-    usuarioData,
+    usuarioData
   );
 
   return {
@@ -74,7 +66,6 @@ export const putUsuarioService = async (idUsuario, usuarioData) => {
 };
 
 export const deleteUsuarioService = async (idUsuario) => {
-
   await UserModel.findByIdAndDelete({ _id: idUsuario });
 
   return {

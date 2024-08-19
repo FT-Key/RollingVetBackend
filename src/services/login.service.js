@@ -10,7 +10,8 @@ export async function loginService(userData) {
 
   try {
     // Verificar si el usuario existe en la base de datos
-    const usuarios = await getUsuariosService();
+    const usuariosResponse = await getUsuariosService();
+    const usuarios = usuariosResponse.usuarios;
 
     const usuarioEncontrado = usuarios.find(
       (u) => u.nombreUsuario === nombreDeUsuario
@@ -56,9 +57,7 @@ export async function loginService(userData) {
   }
 }
 
-export async function googleLoginService(req, res) {
-  const { token } = req.body;
-
+export async function googleLoginService(token) {
   try {
     // Verificar el token con Google
     const response = await fetch(
@@ -67,25 +66,28 @@ export async function googleLoginService(req, res) {
     const userInfo = await response.json();
 
     if (userInfo.error) {
-      return res.status(400).json({ error: "Token inválido" });
+      return { statusCode: 400, mensaje: "Token inválido" };
     }
 
-    const usuarios = await getUsuariosService();
+    const usuariosResponse = await getUsuariosService();
+    const usuarios = usuariosResponse.usuarios;
 
     const usuarioEncontrado = usuarios.find((u) => u.email === userInfo.email);
 
     if (!usuarioEncontrado) {
-      return res.status(404).json({ error: "UsuarioEncontrado no encontrado" });
+      return { statusCode: 404, mensaje: "UsuarioEncontrado no encontrado" };
     }
 
     // Verificar la contraseña
+    const userSubString = String(userInfo.sub).trim();
+    const userFoundString = String(usuarioEncontrado.contrasenia).trim();
     const contraseñaCoincide = await verifyPassword(
-      userInfo.sub,
-      usuarioEncontrado.contrasenia
+      userSubString,
+      userFoundString
     );
 
     if (!contraseñaCoincide) {
-      return res.status(401).json({ error: "Contraseña incorrecta" });
+      return { statusCode: 401, mensaje: "Contraseña incorrecta" };
     }
 
     // Actualizar el estado de estaActivo a true usando putUsuarioService
@@ -100,18 +102,20 @@ export async function googleLoginService(req, res) {
     );
 
     if (!actualizacion.usuario) {
-      return res
-        .status(500)
-        .json({ message: "Error al actualizar el usuario" });
+      return { statusCode: 500, mensaje: "Error al actualizar el usuario" };
     }
 
     // Emitir una sesión o token JWT
     const jwtToken = generateJwtToken(usuarioEncontrado);
 
-    return res.json({ token: jwtToken });
+    return {
+      statusCode: 200,
+      token: jwtToken,
+      mensaje: "Inicio de sesión exitoso!",
+    };
   } catch (error) {
     console.error("Error en googleLoginService", error);
-    return res.status(500).json({ error: "Error al verificar el token" });
+    return { statusCode: 500, mensaje: "Error al verificar el token" };
   }
 }
 
