@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { model, Schema } from "mongoose";
+import { model } from "mongoose";
 
 const CartSchema = new mongoose.Schema({
   idUsuario: {

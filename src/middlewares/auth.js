@@ -21,7 +21,6 @@ export const authTokenAndRole = (requiredRole) => {
             if (Array.isArray(requiredRole) && !requiredRole.includes(user.rol)) {
                 return res.status(403).json({ message: 'No tienes permiso para acceder a esta ruta' });
             }
-
             next();
         } catch (error) {
             return res.status(403).json({ message: 'Token no válido o error en la verificación del rol', error });

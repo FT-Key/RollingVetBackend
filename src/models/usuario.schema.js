@@ -68,7 +68,7 @@ const UsuarioSchema = new Schema({
   id: { type: Number, unique: true, required: true, unique: true },
   nombreUsuario: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true, unique: true },
-  contrasenia: { type: String },
+  contrasenia: { type: String, required: true },
   login: { type: Boolean, default: false },
   bloqueado: { type: Boolean, default: false },
   tipoRegistro: { type: String, enum: ["normal", "google"], default: "normal" },

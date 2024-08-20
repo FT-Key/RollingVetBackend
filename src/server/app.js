@@ -3,8 +3,8 @@ import express from "express";
 import cors from "cors";
 //
 
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Obtén el directorio del archivo actual
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -14,6 +14,7 @@ import productosRouter from "../routes/productos.routes.js";
 import usuariosRouter from "../routes/usuarios.routes.js";
 import loginRouter from "../routes/login.routes.js";
 import registerRouter from "../routes/register.routes.js";
+import favncartRouter from "../routes/favncart.routes.js";
 
 class Server {
   constructor(puerto) {
@@ -29,13 +30,14 @@ class Server {
     this.app.use("/usuarios", usuariosRouter);
     this.app.use("/login", loginRouter);
     this.app.use("/register", registerRouter);
+    this.app.use("/favncart", favncartRouter);
     this.app.get("/api/hello", (req, res) => {
       res.json({ message: "Hello from the server!" });
     });
 
     // Ruta para servir el HTML
     this.app.get("/", (req, res) => {
-      res.sendFile(path.join(__dirname, '../views/indice.html'));
+      res.sendFile(path.join(__dirname, "../views/indice.html"));
     });
   }
 
