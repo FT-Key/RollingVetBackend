@@ -1,3 +1,4 @@
+import cloudinary from "../helpers/cloudinary.config.js";
 import ProductModel from "../models/producto.schema.js";
 
 export const getProductosService = async () => {
@@ -58,4 +59,17 @@ export const deleteProductoService = async (idProducto) => {
     mensaje: "Producto eliminado",
     statusCode: 200,
   };
+};
+
+export const agregarImagenProductoService = async (idProducto, file) => {
+  const producto = await ProductModel.findById(idProducto);
+  const imagen = await cloudinary.uploader.upload(file.path);
+  producto.imageUrl = imagen.secure_url;
+
+  await producto.save();
+
+  return {
+    msg: 'Imagen cargada',
+    statusCode: 200,
+  }
 };

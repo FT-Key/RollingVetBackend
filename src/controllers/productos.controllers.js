@@ -3,7 +3,8 @@ import {
   getProductoService,
   postProductoService,
   putProductoService,
-  deleteProductoService
+  deleteProductoService,
+  agregarImagenProductoService
 } from '../services/productos.service.js';
 
 export const getProductos = async (req, res) => {
@@ -61,5 +62,15 @@ export const deleteProducto = async (req, res) => {
     return res.status(result.statusCode).json({ msg: result.mensaje });
   } catch (error) {
     return res.status(500).json({ msg: "Error interno del servidor." });
+  }
+};
+
+export const agregarImagenProductoController = async (req, res) => {
+  const result = await agregarImagenProductoService(req.params.idProducto, req.file);
+
+  if (result.statusCode === 200) {
+    res.status(200).json({ msg: result.msg });
+  } else {
+    res.status(500).json({ msg: 'Error al cargar la imagen del producto' });
   }
 };

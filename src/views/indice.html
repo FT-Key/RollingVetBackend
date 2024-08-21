@@ -7,10 +7,10 @@
   <title>Server</title>
   <style>
     :root {
-      --color: white;
+      --color: #FF4500;
       --deg: 0;
       --animation-duration: 2s;
-      --animation-color-duration: 20s;
+      --animation-color-duration: 22s;
     }
 
     * {
@@ -263,6 +263,18 @@
     <span></span>
     <div class="back"></div>
   </div>
+
+  <script>
+    const colors = ['#FF4500', '#FF6347', '#FF7F50', '#FFD700', '#FFFF33', '#00ff44', '#39FF14', '#03e9f4', '#1E90FF', '#9400D3', '#FF1493'];
+    let currentColorIndex = 0;
+
+    function changeColor() {
+      currentColorIndex = (currentColorIndex + 1) % colors.length;
+      document.documentElement.style.setProperty('--color', colors[currentColorIndex]);
+    }
+
+    setInterval(changeColor, 2000);
+  </script>
 </body>
 
 </html>
