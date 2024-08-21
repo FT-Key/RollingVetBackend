@@ -65,6 +65,9 @@ export const agregarImagenProductoService = async (idProducto, file) => {
   const producto = await ProductModel.findById(idProducto);
   const imagen = await cloudinary.uploader.upload(file.path);
   producto.imageUrl = imagen.secure_url;
+  if (!producto.imageUrls.includes(imagen.secure_url)) {
+    producto.imageUrls.push(imagen.secure_url);
+  }
 
   await producto.save();
 
