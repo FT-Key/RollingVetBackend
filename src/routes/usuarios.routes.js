@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { getUsuario, getUsuarios, postUsuario, putUsuario, deleteUsuario } from '../controllers/usuarios.controllers.js'
+import { getUsuario, getUsuarios, postUsuario, putUsuario, deleteUsuario, agregarFotoPerfilController } from '../controllers/usuarios.controllers.js'
+import upload from '../middlewares/multer.js';
+import { authTokenAndRole } from '../middlewares/auth.js';
 
 const router = Router();
 
@@ -17,5 +19,8 @@ router.put('/:idUsuario', putUsuario);
 
 /* DELETE */
 router.delete('/:idUsuario', deleteUsuario);
+
+/* SUBIR FOTO DE PERFIL*/
+router.post('/agregarFotoPerfil/:idUsuario', upload.single('image'), agregarFotoPerfilController);
 
 export default router;

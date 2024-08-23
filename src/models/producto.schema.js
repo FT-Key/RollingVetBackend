@@ -16,7 +16,7 @@ const productoSchema = new Schema({
   brand: { type: String, required: true },
   model: { type: String, required: true },
   imageUrl: { type: String, required: true },
-  imageUrls: [{ type: String, default: [''] }], // Agregar un array de strings para almacenar enlaces de imágenes anteriores
+  imageUrls: { type: [String], default: [] }, // Agregar un array de strings para almacenar enlaces de imágenes anteriores
   ratings: { type: Number, required: true, min: 0, max: 5 },
   reviews: [reviewSchema],
   warranty: { type: String, required: true },

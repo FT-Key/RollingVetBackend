@@ -55,20 +55,20 @@ const EnlacesRedesSocialesSchema = new Schema({
 });
 
 const NotificacionesSchema = new Schema({
-  email: { type: Boolean },
-  sms: { type: Boolean },
+  email: { type: Boolean, default: false },
+  sms: { type: Boolean, default: false },
 });
 
 const PreferenciasSchema = new Schema({
-  idioma: { type: String, enum: IDIOMAS },
-  tema: { type: String, enum: TEMAS },
+  idioma: { type: String, enum: IDIOMAS, default: IDIOMAS[0] }, // Por defecto Español
+  tema: { type: String, enum: TEMAS, default: TEMAS[0] }, // Por defecto Claro
 });
 
 const UsuarioSchema = new Schema({
   id: { type: Number, unique: true, required: true, unique: true },
   nombreUsuario: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true, unique: true },
-  contrasenia: { type: String, required: true },
+  contrasenia: { type: String, required: true, select: false },
   login: { type: Boolean, default: false },
   bloqueado: { type: Boolean, default: false },
   tipoRegistro: { type: String, enum: ["normal", "google"], default: "normal" },
@@ -79,13 +79,14 @@ const UsuarioSchema = new Schema({
   direccion: { type: DireccionSchema },
   telefono: { type: String },
   fotoPerfil: { type: String },
+  fotosPerfil: { type: [String], default: [] },
   rol: { type: String, enum: ROLES, required: true, default: "cliente" },
   ultimoIngreso: { type: Date },
   creadoEn: { type: Date, default: Date.now },
   actualizadoEn: { type: Date },
   estaActivo: { type: Boolean, default: true },
-  preferencias: { type: PreferenciasSchema },
-  preguntasSeguridad: [PreguntaSeguridadSchema],
+  preferencias: { type: PreferenciasSchema, default: {} },
+  preguntasSeguridad: { type: [PreguntaSeguridadSchema] },
   biografia: { type: String },
   enlacesRedesSociales: { type: EnlacesRedesSocialesSchema },
   estadoSuscripcion: {
@@ -93,7 +94,7 @@ const UsuarioSchema = new Schema({
     enum: ESTADOS_SUSCRIPCION,
     default: "Gratis",
   },
-  notificaciones: { type: NotificacionesSchema },
+  notificaciones: { type: NotificacionesSchema, default: {} },
   autenticacionDosFactores: { type: Boolean },
   region: { type: String, enum: REGIONES },
   idCarrito: { type: mongoose.Schema.Types.ObjectId, ref: "cart" }, // Referencia al carrito
