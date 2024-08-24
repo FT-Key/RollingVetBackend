@@ -2,6 +2,7 @@ import { Router } from "express";
 import fetch from "node-fetch";
 import { getUsuariosService, putUsuarioService } from "./usuarios.service.js";
 import { generateJwtToken, verifyPassword } from "../utils/login.utils.js";
+import UserModel from "../models/usuario.schema.js";
 
 const router = Router();
 
@@ -9,13 +10,8 @@ export async function loginService(userData) {
   const { nombreDeUsuario, contraseniaDeUsuario } = userData;
 
   try {
-    // Verificar si el usuario existe en la base de datos
-    const usuariosResponse = await getUsuariosService();
-    const usuarios = usuariosResponse.usuarios;
-
-    const usuarioEncontrado = usuarios.find(
-      (u) => u.nombreUsuario === nombreDeUsuario
-    );
+    // Buscar el usuario en la base de datos por nombreDeUsuario
+    const usuarioEncontrado = await UserModel.findOne({ nombreDeUsuario: userInfo.nombreDeUsuario }).select('+contrasenia'); // Selecciona la contraseña aunque esté marcada con select: false
 
     if (!usuarioEncontrado) {
       return res.status(404).json({ message: "Usuario no encontrado" });
@@ -69,11 +65,9 @@ export async function googleLoginService(token) {
       return { statusCode: 400, mensaje: "Token inválido" };
     }
 
-    const usuariosResponse = await getUsuariosService();
-    const usuarios = usuariosResponse.usuarios;
-
-    const usuarioEncontrado = usuarios.find((u) => u.email === userInfo.email);
-
+    // Buscar el usuario en la base de datos por el email
+    const usuarioEncontrado = await UserModel.findOne({ email: userInfo.email }).select('+contrasenia'); // Selecciona la contraseña aunque esté marcada con select: false
+    console.log("UsuarioEncontrado: ", usuarioEncontrado)
     if (!usuarioEncontrado) {
       return { statusCode: 404, mensaje: "UsuarioEncontrado no encontrado" };
     }

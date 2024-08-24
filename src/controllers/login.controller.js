@@ -12,7 +12,7 @@ export const postLogin = async (req, res) => {
     }
     return res
       .status(result.statusCode)
-      .json({ msg: result.mensaje, token: result.token});
+      .json({ msg: result.mensaje, token: result.token });
   } catch (error) {
     return res.status(500).json({ msg: "Error interno del servidor." });
   }
