@@ -1,6 +1,7 @@
 import {
   addProductToCartService,
   addProductToFavService,
+  buyProductsService,
   getCartService,
   getFavService,
   removeProductFromCartService,
@@ -35,6 +36,16 @@ export const getCartController = async (req, res) => {
     const idUsuario = req.user._id;
     const cart = await getCartService(idUsuario);
     res.status(200).json(cart);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const buyProductsController = async (req, res) => {
+  try {
+    const productos = req.body;
+    const cart = await buyProductsService(productos);
+    res.status(200).json(cart.url);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -14,7 +14,7 @@ export const generateJwtToken = (userInfo) => {
     fotoPerfil: userInfo.fotoPerfil || "",
   };
 
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });
 };
 
 // Función para verificar una contraseña

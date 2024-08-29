@@ -4,14 +4,12 @@ import { getUsuariosService, putUsuarioService } from "./usuarios.service.js";
 import { generateJwtToken, verifyPassword } from "../utils/login.utils.js";
 import UserModel from "../models/usuario.schema.js";
 
-const router = Router();
-
 export async function loginService(userData) {
   const { nombreDeUsuario, contraseniaDeUsuario } = userData;
 
   try {
     // Buscar el usuario en la base de datos por nombreDeUsuario
-    const usuarioEncontrado = await UserModel.findOne({ nombreDeUsuario: userInfo.nombreDeUsuario }).select('+contrasenia'); // Selecciona la contraseña aunque esté marcada con select: false
+    const usuarioEncontrado = await UserModel.findOne({ nombreDeUsuario: nombreDeUsuario }).select('+contrasenia'); // Selecciona la contraseña aunque esté marcada con select: false
 
     if (!usuarioEncontrado) {
       return res.status(404).json({ message: "Usuario no encontrado" });
@@ -113,4 +111,33 @@ export async function googleLoginService(token) {
   }
 }
 
-export default router;
+export async function closeLoginService(user) {
+  try {
+    // Busca y actualiza al usuario en una sola operación
+    const usuarioActualizado = await UserModel.findByIdAndUpdate(
+      user._id,
+      { login: false }, // Actualiza solo el campo 'login'
+      { new: true } // Devuelve el usuario actualizado
+    );
+
+    // Verifica si el usuario fue encontrado
+    if (!usuarioActualizado) {
+      return {
+        mensaje: "Usuario no encontrado",
+        statusCode: 404,
+      };
+    }
+
+    return {
+      mensaje: "Se cerró la sesión",
+      usuario: usuarioActualizado,
+      statusCode: 200,
+    };
+  } catch (error) {
+    return {
+      mensaje: "Error al cerrar la sesión",
+      error: error.message,
+      statusCode: 500,
+    };
+  }
+}
