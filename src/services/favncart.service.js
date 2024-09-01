@@ -43,7 +43,7 @@ export const getCartService = async (idUsuario) => {
   return cart;
 };
 
-export const buyProductsService = async (productos) => {
+export const buyProductsMPService = async (productos, returnUrl) => {
   const cliente = new MercadoPagoConfig({
     accessToken: process.env.MP_ACCESS_TOKEN,
   });
@@ -51,40 +51,37 @@ export const buyProductsService = async (productos) => {
   // Obtener los detalles de los productos desde la base de datos
   const items = await Promise.all(
     productos.map(async (prod) => {
-      // Busca el producto en la base de datos usando su id
       const producto = await ProductModel.findById(prod.idProducto);
-      
+
       if (!producto) {
         throw new Error(`Producto con id ${prod.idProducto} no encontrado`);
       }
 
-      // Retorna el formato necesario para MercadoPago
       return {
-        title: producto.name, // Asume que tu producto tiene un campo 'name'
+        title: producto.name,
         quantity: prod.cantidad,
-        unit_price: producto.price, // Asume que tu producto tiene un campo 'price'
-        currency_id: 'ARS', // Cambia según sea necesario
+        unit_price: producto.price,
+        currency_id: 'ARS',
       };
     })
   );
 
-  // Crear la preferencia en MercadoPago
   const preference = new Preference(cliente);
 
   const result = await preference.create({
     body: {
-      items, // Utiliza el array dinámico de productos
+      items,
       back_urls: {
-        success: 'frontend/carrito/success',
-        failure: 'frontend/carrito/failure',
-        pending: 'frontend/carrito/pending',
+        success: `${returnUrl}/success`,
+        failure: `${returnUrl}/failure`,
+        pending: `${returnUrl}/pending`,
       },
       auto_return: 'approved',
     }
   });
 
   return {
-    url: result.init_point,
+    url: result.id,
     statusCode: 200,
   };
 };

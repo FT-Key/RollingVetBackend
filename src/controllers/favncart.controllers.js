@@ -1,7 +1,7 @@
 import {
   addProductToCartService,
   addProductToFavService,
-  buyProductsService,
+  buyProductsMPService,
   getCartService,
   getFavService,
   removeProductFromCartService,
@@ -41,10 +41,15 @@ export const getCartController = async (req, res) => {
   }
 };
 
-export const buyProductsController = async (req, res) => {
+export const buyProductsMPController = async (req, res) => {
   try {
-    const productos = req.body;
-    const cart = await buyProductsService(productos);
+    const { productos, returnUrl } = req.body; // Extraer returnUrl del cuerpo de la solicitud
+
+    if (!returnUrl) {
+      throw new Error('Falta la URL de retorno');
+    }
+
+    const cart = await buyProductsMPService(productos, returnUrl);
     res.status(200).json(cart.url);
   } catch (error) {
     res.status(500).json({ message: error.message });

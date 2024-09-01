@@ -6,7 +6,7 @@ import {
   addProductToFavController,
   removeProductFromFavController,
   getFavController,
-  buyProductsController
+  buyProductsMPController
 } from '../controllers/favncart.controllers.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
 
@@ -16,7 +16,7 @@ const router = express.Router();
 router.post('/carrito/agregar/:idProducto', authTokenAndRole(['cliente', 'admin']), addProductToCartController);
 router.delete('/carrito/quitar/:idProducto', authTokenAndRole(['cliente', 'admin']), removeProductFromCartController);
 router.get('/carrito', authTokenAndRole(['cliente', 'admin']), getCartController);
-router.post('/carrito/comprarProductos', authTokenAndRole(['cliente', 'admin']), buyProductsController);
+router.post('/carrito/comprarProductosMercadoPago', authTokenAndRole(['cliente', 'admin']), buyProductsMPController);
 
 // Rutas para los favoritos
 router.post('/fav/agregar/:idProducto', authTokenAndRole(['cliente', 'admin']), addProductToFavController);
