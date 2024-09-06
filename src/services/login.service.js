@@ -65,7 +65,7 @@ export async function googleLoginService(token) {
 
     // Buscar el usuario en la base de datos por el email
     const usuarioEncontrado = await UserModel.findOne({ email: userInfo.email }).select('+contrasenia'); // Selecciona la contraseña aunque esté marcada con select: false
-    console.log("UsuarioEncontrado: ", usuarioEncontrado)
+    
     if (!usuarioEncontrado) {
       return { statusCode: 404, mensaje: "UsuarioEncontrado no encontrado" };
     }

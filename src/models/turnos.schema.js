@@ -10,7 +10,6 @@ const TIPOS_ATENCION = [
   'Consulta sobre garantía',
   'Atención post-venta',
   'Asesoría en productos exclusivos',
-  // Puedes añadir más tipos si es necesario
 ];
 
 // Definir los posibles estados para el turno
@@ -22,20 +21,15 @@ const ESTADOS_TURNO = [
   'confirmado',
 ];
 
-// Definir el esquema para el Turno
+// Definir el subdocumento Turno
 const turnoSchema = new mongoose.Schema({
+  hora: {
+    type: String,  // Ejemplo: '09:00'
+    required: true
+  },
   tipoAtencion: {
     type: String,
     enum: TIPOS_ATENCION,
-    required: true
-  },
-  fecha: {
-    type: Date,
-    required: true
-  },
-  usuario: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Usuario',
     required: true
   },
   estado: {
@@ -43,15 +37,13 @@ const turnoSchema = new mongoose.Schema({
     enum: ESTADOS_TURNO,
     default: 'pendiente'
   },
+  usuario: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Usuario',
+    required: false  // Será null hasta que el cliente lo reserve
+  },
   descripcion: {
     type: String, // Campo opcional para proporcionar detalles adicionales si es necesario
-  },
-  creadoEn: {
-    type: Date,
-    default: Date.now
-  },
-  actualizadoEn: {
-    type: Date
   }
 });
 
