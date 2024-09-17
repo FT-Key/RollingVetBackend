@@ -1,25 +1,27 @@
 import { Router } from 'express';
-import { getProductos, getProducto, postProducto, putProducto, deleteProducto, agregarImagenProductoController } from '../controllers/productos.controllers.js'
+import { getProductosController, getProductoController, postProductoController, putProductoController, deleteProductoController, agregarImagenProductoController } from '../controllers/productos.controllers.js'
 import upload from '../middlewares/multer.js';
+import { authTokenAndRole } from '../middlewares/auth.js';
+import { paginationMiddleware } from '../utils/pagination.js';
 
 const router = Router();
 
 /* GET */
-router.get('/', getProductos);
+router.get('/', paginationMiddleware, getProductosController);
 
 /* GET con parametro */
-router.get('/:idProducto', getProducto);
+router.get('/:idProducto', getProductoController);
 
 /* POST */
-router.post('/', postProducto);
+router.post('/', authTokenAndRole('admin'), postProductoController);
 
 /* PUT */
-router.put('/:idProducto', putProducto);
+router.put('/:idProducto', authTokenAndRole('admin'), putProductoController);
 
 /* DELETE */
-router.delete('/:idProducto', deleteProducto);
+router.delete('/:idProducto', authTokenAndRole('admin'), deleteProductoController);
 
 /* SUBIR IMAGEN */
-router.post('/agregarImagen/:idProducto', upload.single('image'), agregarImagenProductoController);
+router.post('/agregarImagen/:idProducto', authTokenAndRole('admin'), upload.single('image'), agregarImagenProductoController);
 
 export default router;

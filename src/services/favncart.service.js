@@ -58,9 +58,9 @@ export const buyProductsMPService = async (productos, returnUrl) => {
       }
 
       return {
-        title: producto.name,
+        title: producto.nombre,
         quantity: prod.cantidad,
-        unit_price: producto.price,
+        unit_price: producto.precio,
         currency_id: 'ARS',
       };
     })

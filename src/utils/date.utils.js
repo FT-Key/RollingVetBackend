@@ -73,17 +73,17 @@ export const normalizeDate = (date) => {
 
 export const obtenerFechasDeSemana = () => {
   const fechas = [];
-  const timezone = 'America/Argentina/Buenos_Aires'; // Zona horaria de Argentina
-  const hoy = moment.tz(timezone); // Fecha y hora actual en la zona horaria de Argentina
-  const lunes = moment.tz(timezone).startOf('isoWeek'); // Comienza el lunes en la zona horaria de Argentina
-  const sabado = moment.tz(timezone).endOf('isoWeek').subtract(1, 'day'); // Sábado en la zona horaria de Argentina
+  const timezone = 'America/Argentina/Buenos_Aires';
+  const hoy = moment.tz(timezone);
+  const lunes = moment.tz(timezone).startOf('isoWeek'); // Comienza el lunes
+  const sabado = moment.tz(timezone).endOf('isoWeek').subtract(1, 'day'); // Sábado
 
-  // Solo generar las fechas de hoy hasta el sábado
+  // Simplemente agrega las fechas de lunes a sábado
   for (let i = 0; i < 6; i++) {
     const fecha = lunes.clone().add(i, 'days');
-    if (fecha.isSameOrAfter(hoy, 'day') && fecha.isBefore(sabado, 'day')) {
-      fechas.push(fecha.toDate());
-    }
+    fechas.push(fecha.toDate());
   }
+
+  console.log('Fechas generadas:', fechas);
   return fechas;
 };

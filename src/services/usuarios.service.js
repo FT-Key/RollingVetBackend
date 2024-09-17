@@ -3,10 +3,22 @@ import CartModel from "../models/carrito.schema.js";
 import FavModel from "../models/favoritos.schema.js";
 import cloudinary from "../helpers/cloudinary.config.js";
 
-export const getUsuariosService = async () => {
-  const usuarios = await UserModel.find();
+export const getUsuariosService = async (pagination = null) => {
+  let usuarios;
+  let totalUsuarios = await UserModel.countDocuments(); // Obtener el total de usuarios en cualquier caso
+
+  if (pagination) {
+    const { skip, limit } = pagination;
+    usuarios = await UserModel.find()
+      .skip(skip)
+      .limit(limit);
+  } else {
+    usuarios = await UserModel.find(); // Si no hay paginación, traer todos los usuarios
+  }
+
   return {
     usuarios,
+    totalUsuarios,  // Enviar el total de usuarios en ambos casos
     statusCode: 200,
   };
 };

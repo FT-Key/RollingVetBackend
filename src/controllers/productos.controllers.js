@@ -7,11 +7,17 @@ import {
   agregarImagenProductoService
 } from '../services/productos.service.js';
 
-export const getProductos = async (req, res) => {
+export const getProductosController = async (req, res) => {
   try {
-    const result = await getProductosService();
+    const result = await getProductosService(req.pagination);  // Pasar paginación al servicio
+    
     if (result.statusCode === 200) {
-      return res.status(200).json(result.productos);
+      return res.status(200).json({
+        productos: result.productos,
+        totalProductos: result.totalProductos,
+        page: req.pagination ? req.pagination.page : null,  // Retornar page solo si existe paginación
+        limit: req.pagination ? req.pagination.limit : null  // Retornar limit solo si existe paginación
+      });
     } else {
       return res.status(500).json({ msg: "Error al traer los productos." });
     }
@@ -20,7 +26,7 @@ export const getProductos = async (req, res) => {
   }
 };
 
-export const getProducto = async (req, res) => {
+export const getProductoController = async (req, res) => {
   try {
     const idProducto = req.params.idProducto;
     const result = await getProductoService(idProducto);
@@ -34,7 +40,7 @@ export const getProducto = async (req, res) => {
   }
 };
 
-export const postProducto = async (req, res) => {
+export const postProductoController = async (req, res) => {
   try {
     const nuevoProductoData = req.body;
     const result = await postProductoService(nuevoProductoData);
@@ -44,7 +50,7 @@ export const postProducto = async (req, res) => {
   }
 };
 
-export const putProducto = async (req, res) => {
+export const putProductoController = async (req, res) => {
   try {
     const idProducto = req.params.idProducto;
     const productoData = req.body;
@@ -55,7 +61,7 @@ export const putProducto = async (req, res) => {
   }
 };
 
-export const deleteProducto = async (req, res) => {
+export const deleteProductoController = async (req, res) => {
   try {
     const idProducto = req.params.idProducto;
     const result = await deleteProductoService(idProducto);

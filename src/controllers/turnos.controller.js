@@ -43,29 +43,26 @@ export const crearTurnoController = async (req, res) => {
 
 export const obtenerTurnosController = async (req, res) => {
   try {
-    // Obtener la fecha del parámetro de ruta
     const { fecha } = req.params;
 
-    // Verificar si se ha proporcionado la fecha
     if (fecha) {
-      // Llamar al servicio para obtener los turnos para la fecha especificada
+      // Obtener turnos para una fecha específica
       const turnos = await obtenerTurnoService(fecha, req.user);
-      // Verificar si se encontraron turnos para la fecha dada
       if (!turnos) {
         return res.status(404).json({ message: 'No se encontraron turnos para la fecha especificada.' });
       }
-
-      // Enviar la respuesta con los turnos
       return res.status(200).json(turnos);
     } else {
-      // Llamar al servicio para obtener todos los turnos
-      const turnos = await obtenerTodosLosTurnosService();
-
-      // Enviar la respuesta con todos los turnos
-      return res.status(200).json(turnos);
+      // Obtener todos los turnos con paginación
+      const result = await obtenerTodosLosTurnosService(req.pagination);  // Pasar paginación al servicio
+      return res.status(200).json({
+        fechaTurnos: result.fechaTurnos,
+        totalTurnos: result.totalTurnos,
+        page: req.pagination ? req.pagination.page : null,
+        limit: req.pagination ? req.pagination.limit : null
+      });
     }
   } catch (error) {
-    // Manejar errores de manera adecuada
     const statusCode = error.message === 'Ya tienes un turno reservado para este día.' ? 400 : 500;
     return res.status(statusCode).json({ message: error.message || 'Error al obtener los turnos.' });
   }
@@ -83,10 +80,16 @@ export const listaTurnosController = async (req, res) => {
     // Llamar al servicio para obtener los turnos del usuario
     const turnos = await listaTurnosService(userId);
 
-    // Verificar si se encontraron turnos
-    if (!turnos || turnos.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron turnos para el usuario.' });
+    // Si el valor es null, undefined o no es un array, es un error
+    if (!Array.isArray(turnos)) {
+      return res.status(500).json({ message: 'Error al obtener los turnos del usuario.' });
     }
+
+    // Si es un array vacío, no es un error
+    if (turnos.length === 0) {
+      return res.status(200).json({ message: 'No tiene turnos.' });
+    }
+
     // Enviar la respuesta con los turnos
     res.status(200).json(turnos);
   } catch (error) {

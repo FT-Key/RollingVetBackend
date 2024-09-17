@@ -51,7 +51,7 @@ const PreguntaSeguridadSchema = new Schema({
 
 const EnlacesRedesSocialesSchema = new Schema({
   twitter: { type: String },
-  linkedin: { type: String },
+  instagram: { type: String },
 });
 
 const NotificacionesSchema = new Schema({
@@ -86,7 +86,7 @@ const UsuarioSchema = new Schema({
   actualizadoEn: { type: Date },
   estaActivo: { type: Boolean, default: true },
   preferencias: { type: PreferenciasSchema, default: {} },
-  preguntasSeguridad: { type: [PreguntaSeguridadSchema] },
+  preguntaSeguridad: { type: PreguntaSeguridadSchema },
   biografia: { type: String },
   enlacesRedesSociales: { type: EnlacesRedesSocialesSchema },
   estadoSuscripcion: {
@@ -99,6 +99,7 @@ const UsuarioSchema = new Schema({
   region: { type: String, enum: REGIONES },
   idCarrito: { type: mongoose.Schema.Types.ObjectId, ref: "cart" }, // Referencia al carrito
   idFavoritos: { type: mongoose.Schema.Types.ObjectId, ref: "fav" }, // Referencia a favoritos
+  mascotas: [{ type: mongoose.Schema.Types.ObjectId, ref: "Animal" }], // Relación con múltiples animales
 });
 
 const Usuario = model("Usuario", UsuarioSchema);

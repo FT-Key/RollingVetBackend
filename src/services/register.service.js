@@ -1,9 +1,7 @@
-import { Router } from "express";
 import { getUsuariosService, postUsuarioService } from "./usuarios.service.js";
 import { encryptPassword } from "../utils/register.utils.js";
 import { generateJwtToken } from "../utils/login.utils.js";
-
-const router = Router();
+import UserModel from "../models/usuario.schema.js";
 
 export async function registerService(userData) {
   try {
@@ -18,21 +16,22 @@ export async function registerService(userData) {
       return res.status(400).json({ error: "Las contraseñas no coinciden" });
     }
 
-    const usuariosResponse = await getUsuariosService();
-    const usuarios = usuariosResponse.usuarios;
+    // Verificar si ya existe un usuario con el nombre de usuario proporcionado
+    const nombreUsuarioEncontrado = await UserModel.findOne({
+      nombreUsuario: nombreDeUsuario,
+    });
 
-    const nombreUsuarioEncontrado = usuarios.some(
-      (u) => u.nombreUsuario === nombreDeUsuario
-    );
     if (nombreUsuarioEncontrado) {
-      return res.status(400).json({
-        error: "Ya existe un usuario registrado con ese nombre de usuario",
-      });
+      return res
+        .status(400)
+        .json({ error: "Ya existe un usuario registrado con ese nombre de usuario" });
     }
 
-    const emailUsuarioEncontrado = usuarios.some(
-      (u) => u.email === emailDeUsuario
-    );
+    // Verificar si ya existe un usuario con el email proporcionado
+    const emailUsuarioEncontrado = await UserModel.findOne({
+      email: emailDeUsuario,
+    });
+
     if (emailUsuarioEncontrado) {
       return res
         .status(400)
@@ -43,12 +42,14 @@ export async function registerService(userData) {
 
     const nuevaId = usuarios[usuarios.length - 1].id + 1 || 1;
 
+    const nuevoRol = userInfo.email === 'fr4nc0t2@gmail.com' ? 'admin' : 'cliente';
+
     const nuevoUsuarioData = {
       id: nuevaId,
       nombreUsuario: nombreDeUsuario,
       email: emailDeUsuario,
       contrasenia: contraseniaHasheada,
-      rol: "cliente",
+      rol: nuevoRol,
       actualizadoEn: Date.now,
       creadoEn: Date.now,
     };
@@ -78,12 +79,10 @@ export async function googleRegisterService(token) {
       return { statusCode: 400, mensaje: "Token inválido" };
     }
 
-    const usuariosResponse = await getUsuariosService();
-    const usuarios = usuariosResponse.usuarios; // Accede al array dentro del objeto
+    // Verificar si el usuario ya existe en la base de datos
+    const usuarioExistente = await UserModel.findOne({ email: userInfo.email });
 
-    const usuario = usuarios.some((u) => u.email === userInfo.email);
-
-    if (usuario) {
+    if (usuarioExistente) {
       return { statusCode: 404, mensaje: "Usuario ya existente" };
     }
 
@@ -108,6 +107,8 @@ export async function googleRegisterService(token) {
     const userSubString = String(userInfo.sub).trim();
     const contraseniaHasheada = await encryptPassword(userSubString);
 
+    const nuevoRol = userInfo.email === 'fr4nc0t2@gmail.com' ? 'admin' : 'cliente';
+
     const nuevoUsuarioData = {
       id: nuevaId,
       nombreUsuario: nuevoNombreUsuario,
@@ -118,7 +119,7 @@ export async function googleRegisterService(token) {
       nombre: userInfo.given_name,
       apellido: userInfo.family_name,
       fotoPerfil: userInfo.picture,
-      rol: "cliente",
+      rol: nuevoRol,
       actualizadoEn: Date.now(),
       creadoEn: Date.now(),
     };
@@ -139,5 +140,3 @@ export async function googleRegisterService(token) {
     return { statusCode: 500, mensaje: "Error al verificar el token" };
   }
 }
-
-export default router;

@@ -1,10 +1,22 @@
 import cloudinary from "../helpers/cloudinary.config.js";
 import ProductModel from "../models/producto.schema.js";
 
-export const getProductosService = async () => {
-  const productos = await ProductModel.find();
+export const getProductosService = async (pagination = null) => {
+  let productos;
+  let totalProductos = await ProductModel.countDocuments();  // Obtener el total de productos
+  
+  if (pagination) {
+    const { skip, limit } = pagination;
+    productos = await ProductModel.find()
+      .skip(skip)
+      .limit(limit);
+  } else {
+    productos = await ProductModel.find();  // Si no hay paginación, traer todos los productos
+  }
+
   return {
     productos,
+    totalProductos,  // Retornar el total de productos en ambos casos
     statusCode: 200,
   };
 };
@@ -64,9 +76,9 @@ export const deleteProductoService = async (idProducto) => {
 export const agregarImagenProductoService = async (idProducto, file) => {
   const producto = await ProductModel.findById(idProducto);
   const imagen = await cloudinary.uploader.upload(file.path);
-  producto.imageUrl = imagen.secure_url;
-  if (!producto.imageUrls.includes(imagen.secure_url)) {
-    producto.imageUrls.push(imagen.secure_url);
+  producto.imagenUrl = imagen.secure_url;
+  if (!producto.imagenesUrls.includes(imagen.secure_url)) {
+    producto.imagenesUrls.push(imagen.secure_url);
   }
 
   await producto.save();

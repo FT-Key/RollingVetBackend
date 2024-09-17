@@ -9,8 +9,14 @@ import {
 
 export const getUsuarios = async (req, res) => {
   try {
-    const result = await getUsuariosService();
-    return res.status(result.statusCode).json(result.usuarios);
+    const result = await getUsuariosService(req.pagination);  // Llama al servicio con la paginación (puede ser null)
+    
+    return res.status(result.statusCode).json({
+      usuarios: result.usuarios,
+      totalUsuarios: result.totalUsuarios,
+      page: req.pagination ? req.pagination.page : null,  // Retorna page solo si existe paginación
+      limit: req.pagination ? req.pagination.limit : null  // Retorna limit solo si existe paginación
+    });
   } catch (error) {
     return res.status(500).json({ msg: "Error interno del servidor." });
   }

@@ -26,35 +26,46 @@ export const crearTurnoService = async (datosTurno) => {
   }
 }; */
 
-export const obtenerTodosLosTurnosService = async () => {
+export const obtenerTodosLosTurnosService = async (pagination = null) => {
   try {
-    // Obtener todos los documentos FechaTurno sin hacer el populate aún
-    let fechasTurno = await FechaTurnoModel.find();
+    // Obtener el número total de turnos
+    let totalTurnos = await FechaTurnoModel.countDocuments();
+
+    // Calcular skip y limit si la paginación existe
+    let fechasTurno;
+    if (pagination) {
+      const { skip, limit } = pagination;
+      fechasTurno = await FechaTurnoModel.find()
+        .skip(skip)
+        .limit(limit)
+        .populate({
+          path: 'turnos.usuario', // Hacer populate del usuario dentro de cada turno
+          select: 'nombre email',
+        });
+    } else {
+      // Si no hay paginación, traer todos los turnos
+      fechasTurno = await FechaTurnoModel.find().populate({
+        path: 'turnos.usuario',
+        select: 'nombre email',
+      });
+    }
 
     // Llamar a la función para actualizar los turnos que ya pasaron
     await actualizarTurnosNoAsistidos(fechasTurno);
 
-    // Obtener todos los documentos FechaTurno
-    fechasTurno = await FechaTurnoModel.find().populate({
-      path: 'turnos.usuario', // Hacer populate del usuario dentro de cada turno
-      select: 'nombre email', // Selecciona solo los campos que necesitas
-    });
+    // Mapear los turnos con los usuarios poblados
+    const turnosConUsuarios = fechasTurno.map(turno => ({
+      ...turno._doc,
+      usuario: turno.usuario ? turno.usuario : null
+    }));
 
-    // Obtener todos los turnos de todas las fechas
-    const turnos = fechasTurno;
-
-    // Verificar si los turnos tienen un usuario poblado correctamente
-    const turnosConUsuarios = turnos.map(turno => {
-      return {
-        ...turno._doc,  // Acceder a los campos del documento
-        usuario: turno.usuario ? turno.usuario : null // Asegurar que el usuario está poblado o es null
-      };
-    });
-
-    // Devolver todos los turnos con los usuarios poblados
-    return turnosConUsuarios;
+    // Devolver los turnos y el total de turnos
+    return {
+      fechaTurnos: turnosConUsuarios,
+      totalTurnos,
+      statusCode: 200,
+    };
   } catch (error) {
-    // Lanza el error para que el controlador lo maneje
     throw new Error(error.message || 'Error al obtener todos los turnos');
   }
 };
@@ -174,12 +185,14 @@ export const crearTurnosParaFecha = async (fecha, creadorId) => {
 
 export const crearTurnosSemanalesService = async (creadorId) => {
   try {
-    // Generar las fechas de lunes a sábado de la semana actual
+    // Generar las fechas de lunes a sábado de la semana actual (excluyendo domingo)
     const fechasSemana = obtenerFechasDeSemana();
+    console.log("FECHAS: ", fechasSemana);
 
-    // Crear turnos para cada fecha de la semana
+    // Crear turnos para cada fecha de la semana, excepto domingo
     for (const fecha of fechasSemana) {
       try {
+        console.log("Se crea turno para: ", fecha);
         await crearTurnosParaFecha(fecha, creadorId);
       } catch (error) {
         // Manejar el error de duplicidad de clave única (turnos ya existentes para la fecha)
