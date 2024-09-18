@@ -31,7 +31,7 @@ class Server {
     const corsOptions = {
       origin: [
         "http://localhost:5173",
-        "https://reactfrontendtemplates.netlify.app",
+        "https://rollingvet104i.netlify.app",
       ], // Permitir solicitudes desde estos orígenes
       methods: "GET,POST,PUT,DELETE", // Métodos permitidos
       allowedHeaders: "Content-Type,Authorization", // Encabezados permitidos
