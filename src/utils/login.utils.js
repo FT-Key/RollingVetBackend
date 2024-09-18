@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 // Función para generar un Token
 export const generateJwtToken = (userInfo) => {
