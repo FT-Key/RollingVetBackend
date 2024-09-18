@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 // Función para encriptar una contraseña
 export const encryptPassword = async (password) => {
