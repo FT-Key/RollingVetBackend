@@ -1,6 +1,7 @@
 import UserModel from "../models/usuario.schema.js";
 import CartModel from "../models/carrito.schema.js";
 import FavModel from "../models/favoritos.schema.js";
+import AnimalModel from "../models/animal.schema.js";
 import cloudinary from "../helpers/cloudinary.config.js";
 
 export const getUsuariosService = async (pagination = null) => {
@@ -65,21 +66,48 @@ export const postUsuarioService = async (nuevoUsuarioData) => {
 
 export const putUsuarioService = async (idUsuario, usuarioData) => {
   // Busca al usuario por su id
-  const usuario = await UserModel.findById(idUsuario);
+  const usuario = await UserModel.findById(idUsuario).populate('mascotas');
 
   // Si se envía una nueva foto de perfil
   if (usuarioData.fotoPerfil) {
-    // Verifica si la foto no está ya en el array fotosPerfil
-    if (!usuarioData.fotosPerfil.includes(usuarioData.fotoPerfil)) {
-      // Agrega la nueva foto al array fotosPerfil
-      usuarioData.fotosPerfil.push(usuarioData.fotoPerfil);
+    if (!usuario.fotosPerfil.includes(usuarioData.fotoPerfil)) {
+      usuario.fotosPerfil.push(usuarioData.fotoPerfil);
     }
   }
 
-  // Actualiza el resto de la información del usuario
+  // Verificar si se envía el array de mascotas desde el frontend
+  if (usuarioData.mascotas && usuarioData.mascotas.length > 0) {
+    // Recorrer las mascotas enviadas desde el frontend
+    for (let mascotaFrontend of usuarioData.mascotas) {
+      // Verificar si ya existe una mascota en el array del usuario con el mismo nombre y tipo (puedes cambiar esto por otras validaciones más precisas)
+      const mascotaExiste = usuario.mascotas.some(mascotaDB =>
+        mascotaDB.nombre === mascotaFrontend.nombre && mascotaDB.tipo === mascotaFrontend.tipo
+      );
+
+      if (!mascotaExiste) {
+        // Si la mascota no existe, crear una nueva instancia de Animal
+        const nuevaMascota = new AnimalModel({
+          dueño: usuario._id, // El dueño es el usuario actual
+          tipo: mascotaFrontend.tipo,
+          raza: mascotaFrontend.raza,
+          nombre: mascotaFrontend.nombre,
+          edad: mascotaFrontend.edad,
+          estado: "Mascota" // Asumimos que es una mascota
+        });
+
+        // Guardar la nueva mascota en la colección de animales
+        const mascotaGuardada = await nuevaMascota.save();
+
+        // Agregar la referencia de la nueva mascota al array de mascotas del usuario
+        usuario.mascotas.push(mascotaGuardada._id);
+      }
+    }
+  }
+
+  // Actualizar el resto de la información del usuario
   Object.assign(usuario, usuarioData);
 
-  // Guarda los cambios
+  // Guardar los cambios del usuario
   const usuarioActualizado = await usuario.save();
 
   return {
@@ -88,7 +116,6 @@ export const putUsuarioService = async (idUsuario, usuarioData) => {
     statusCode: 200,
   };
 };
-
 
 /* export const putUsuarioService = async (idUsuario, usuarioData) => {
   const usuarioActualizado = await UserModel.findOneAndUpdate(
@@ -111,8 +138,6 @@ export const deleteUsuarioService = async (idUsuario) => {
     statusCode: 200,
   };
 };
-
-
 
 export const agregarFotoPerfilService = async (idUsuario, file) => {
   const usuario = await UserModel.findById(idUsuario);
