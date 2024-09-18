@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 
 export const authTokenAndRole = (requiredRole) => {
-    console.log("ENTRA AL AUTH")
     return async (req, res, next) => {
         try {
             const authHeader = req.headers['authorization'];
