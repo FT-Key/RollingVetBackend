@@ -1,19 +1,23 @@
 import AnimalModel from "../models/animal.schema.js";
+import UserModel from "../models/usuario.schema.js";
 import cloudinary from "../helpers/cloudinary.config.js";
 
-// Obtener todos los animales con paginación
-export const getAnimalesService = async (pagination = null) => {
+// Obtener todos los animales con paginación y filtros
+export const getAnimalesService = async (pagination = null, filters = {}) => {
   let animales;
-  let totalAnimales = await AnimalModel.countDocuments(); // Obtener el total de animales
+  let totalAnimales = await AnimalModel.countDocuments(filters); // Contar solo los documentos que coincidan con los filtros
 
   if (pagination) {
     const { skip, limit } = pagination;
-    animales = await AnimalModel.find()
+    animales = await AnimalModel.find(filters)
       .skip(skip)
       .limit(limit)
-      .populate("dueño", "nombre email");  // Populate opcional
+      .populate("dueño", "nombre email")  // Populate del dueño
+      .populate("plan", "nombre descripcion precio");  // Populate del plan
   } else {
-    animales = await AnimalModel.find().populate("dueño", "nombre email"); // Si no hay paginación, traer todos los animales
+    animales = await AnimalModel.find(filters)
+      .populate("dueño", "nombre email")
+      .populate("plan", "nombre descripcion precio");  // Populate del plan
   }
 
   return {
@@ -25,8 +29,10 @@ export const getAnimalesService = async (pagination = null) => {
 
 // Obtener un animal por su ID
 export const getAnimalService = async (idAnimal) => {
-  const animal = await AnimalModel.findById(idAnimal).populate("dueño", "nombre email");
-  
+  const animal = await AnimalModel.findById(idAnimal)
+    .populate("dueño", "nombre email")
+    .populate("plan", "nombre descripcion precio");  // Populate del plan
+
   if (animal) {
     return {
       animal,
@@ -78,6 +84,7 @@ export const putAnimalService = async (idAnimal, animalData) => {
 
 // Eliminar un animal
 export const deleteAnimalService = async (idAnimal) => {
+  // Buscar y eliminar el animal
   const animal = await AnimalModel.findByIdAndDelete(idAnimal);
 
   if (!animal) {
@@ -87,8 +94,17 @@ export const deleteAnimalService = async (idAnimal) => {
     };
   }
 
+  // Buscar a los usuarios que tienen este animal en su array de mascotas
+  const usuarios = await UserModel.find({ mascotas: idAnimal });
+
+  // Actualizar cada usuario para eliminar el animal de su lista de mascotas
+  for (const usuario of usuarios) {
+    usuario.mascotas = usuario.mascotas.filter(mascotaId => mascotaId.toString() !== idAnimal);
+    await usuario.save();
+  }
+
   return {
-    mensaje: "Animal eliminado",
+    mensaje: "Animal eliminado y referencias actualizadas",
     statusCode: 200,
   };
 };

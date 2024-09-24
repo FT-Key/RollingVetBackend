@@ -2,31 +2,9 @@
 import FechaTurnoModel from "../models/fechaTurnos.schema.js";
 import { normalizeDate, obtenerFechasDeSemana, HORAS_TURNOS, verificarHoraEnRango, ordenarTurnosPorHora } from "../utils/date.utils.js";
 import moment from 'moment-timezone';
+import { MercadoPagoConfig, Preference } from "mercadopago";
 
-/* export const  = async (usuarioId) => {
-  try {
-    // Buscar los turnos que pertenecen al usuario autenticado
-    const turnos = await TurnoModel.find({ usuario: usuarioId });
-    return { statusCode: 200, turnos };
-  } catch (error) {
-    console.error("Error al obtener los turnos:", error);
-    return { statusCode: 500, turnos: [], msg: "Error al obtener los turnos." };
-  }
-};
-
-export const crearTurnoService = async (datosTurno) => {
-  const nuevoTurno = new TurnoModel(datosTurno);
-
-  try {
-    await nuevoTurno.save();
-    return { statusCode: 201, nuevoTurno, msg: 'Turno creado con éxito' };
-  } catch (error) {
-    console.error("Error al guardar el turno:", error);
-    throw new Error("Error al guardar el turno");
-  }
-}; */
-
-export const obtenerTodosLosTurnosService = async (pagination = null) => {
+/* export const obtenerTurnoService = async (pagination = null) => {
   try {
     // Obtener el número total de turnos
     let totalTurnos = await FechaTurnoModel.countDocuments();
@@ -67,6 +45,107 @@ export const obtenerTodosLosTurnosService = async (pagination = null) => {
     };
   } catch (error) {
     throw new Error(error.message || 'Error al obtener todos los turnos');
+  }
+};
+
+export const obtenerTurnoService = async (fecha, user) => {
+  try {
+    // Normalizar la fecha
+    const fechaNormalizada = normalizeDate(fecha);
+
+    // Buscar el documento FechaTurno por la fecha normalizada
+    const fechaTurno = await FechaTurnoModel.findOne({ fecha: fechaNormalizada })
+      .populate('creador', 'nombre')
+      .populate({
+        path: 'turnos', // Nombre del campo en FechaTurno que contiene los turnos
+        populate: {
+          path: 'usuario', // Nombre del campo en Turno que referencia al Usuario
+          select: 'nombre email' // Campos del usuario que deseas obtener
+        }
+      });
+
+    // Si no existe la fecha, retornar null
+    if (!fechaTurno) return null;
+
+    // Envolver fechaTurno en un array y llamar a la función para actualizar los turnos que ya pasaron
+    await actualizarTurnosNoAsistidos([fechaTurno]);
+
+    // Verificar si el usuario ya tiene un turno para ese día
+    const turnoExistente = fechaTurno.turnos.find(turno =>
+      turno.usuario?.toString() === user._id &&
+      (turno.estado === 'pendiente' || turno.estado === 'confirmado' || turno.estado === 'libre')
+    );
+
+    if (turnoExistente && user.rol != 'admin') {
+      // El usuario ya tiene un turno para ese día
+      throw new Error('Ya tienes un turno reservado para este día.');
+    }
+
+    // Devolver los turnos si la fecha existe y el usuario no tiene un turno reservado
+    return fechaTurno;
+  } catch (error) {
+    // Lanza el error para que el controlador lo maneje
+    throw new Error(error.message || 'Error al obtener los turnos');
+  }
+}; */
+
+export const obtenerTurnosService = async (pagination = null, filters = {}, user) => {
+  try {
+    // Filtrar los turnos según los filtros dinámicos
+    const query = { ...filters };
+
+    // Normalizar la fecha si viene en los filtros
+    if (query.fecha) {
+      query.fecha = normalizeDate(query.fecha);
+    }
+
+    // Obtener el número total de turnos que coincidan con los filtros
+    const totalTurnos = await FechaTurnoModel.countDocuments(query);
+
+    // Calcular skip y limit si la paginación existe
+    let fechasTurno;
+    if (pagination) {
+      const { skip, limit } = pagination;
+      fechasTurno = await FechaTurnoModel.find(query)
+        .skip(skip)
+        .limit(limit)
+        .populate({
+          path: 'turnos.usuario', // Hacer populate del usuario dentro de cada turno
+          select: 'nombre email',
+        });
+    } else {
+      // Si no hay paginación, aplicar solo los filtros
+      fechasTurno = await FechaTurnoModel.find(query).populate({
+        path: 'turnos.usuario',
+        select: 'nombre email',
+      });
+    }
+
+    // Actualizar turnos que ya pasaron
+    await actualizarTurnosNoAsistidos(fechasTurno);
+
+    // Verificar si el usuario ya tiene un turno reservado para algún día en caso de que no sea admin
+    if (user.rol !== 'admin') {
+      fechasTurno.forEach(fechaTurno => {
+        const turnoExistente = fechaTurno.turnos.find(turno =>
+          turno.usuario?._id.toString() === user._id.toString() &&
+          (turno.estado === 'pendiente' || turno.estado === 'confirmado' || turno.estado === 'libre')
+        );
+
+        if (turnoExistente) {
+          throw new Error('Ya tienes un turno reservado para este día.');
+        }
+      });
+    }
+
+    // Devolver los turnos y el total
+    return {
+      fechaTurnos: fechasTurno,
+      totalTurnos,
+      statusCode: 200,
+    };
+  } catch (error) {
+    throw new Error(error.message || 'Error al obtener los turnos');
   }
 };
 

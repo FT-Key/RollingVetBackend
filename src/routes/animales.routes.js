@@ -10,11 +10,13 @@ import {
 import upload from '../middlewares/multer.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
 import { paginationMiddleware } from '../utils/pagination.js';
+import AnimalModel from '../models/animal.schema.js'; // Modelo de animales
+import dynamicFilterMiddleware from '../middlewares/filter.js';
 
 const router = Router();
 
 /* GET */
-router.get('/', authTokenAndRole(['admin', 'cliente']), paginationMiddleware, getAnimalsController);
+router.get('/', authTokenAndRole(['admin', 'cliente']), paginationMiddleware, dynamicFilterMiddleware(AnimalModel), getAnimalsController);
 
 /* GET con parametro */
 router.get('/:idAnimal', authTokenAndRole(['admin', 'cliente']), getAnimalController);

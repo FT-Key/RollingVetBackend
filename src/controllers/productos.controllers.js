@@ -9,8 +9,9 @@ import {
 
 export const getProductosController = async (req, res) => {
   try {
-    const result = await getProductosService(req.pagination);  // Pasar paginación al servicio
-    
+    const filters = req.filters || {}; // Obtener los filtros dinámicos
+    const result = await getProductosService(req.pagination, filters); // Pasar los filtros al servicio
+
     if (result.statusCode === 200) {
       return res.status(200).json({
         productos: result.productos,

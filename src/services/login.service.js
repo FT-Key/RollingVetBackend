@@ -7,24 +7,24 @@ export async function loginService(userData) {
   const { nombreDeUsuario, contraseniaDeUsuario, recordarme } = userData;
 
   try {
-    console.log("PUNTO DE CONTROL 3", nombreDeUsuario, contraseniaDeUsuario)
+
     // Buscar el usuario en la base de datos por nombreDeUsuario
     const usuarioEncontrado = await UserModel.findOne({ nombreUsuario: nombreDeUsuario }).select('+contrasenia'); // Selecciona la contraseña aunque esté marcada con select: false
 
     if (!usuarioEncontrado) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }
-    console.log("PUNTO DE CONTROL 4", usuarioEncontrado)
+
     // Verificar la contraseña
     const contraseniaCoincide = await verifyPassword(
       contraseniaDeUsuario,
       usuarioEncontrado.contrasenia
     );
-    console.log("PUNTO DE CONTROL 5")
+
     if (!contraseniaCoincide) {
       return res.status(400).json({ msg: "Contraseña incorrecta" });
     }
-    console.log("PUNTO DE CONTROL 6")
+
     // Actualizar el estado de estaActivo a true usando putUsuarioService
     const usuarioData = {
       estaActivo: true,
@@ -35,16 +35,15 @@ export async function loginService(userData) {
       usuarioEncontrado._id,
       usuarioData
     );
-    console.log("PUNTO DE CONTROL 7")
+
     if (!actualizacion.usuario) {
       return res
         .status(500)
         .json({ msg: "Error al actualizar el usuario" });
     }
-    console.log("PUNTO DE CONTROL 8")
+
     // Generar un token de autenticación
     const token = generateJwtToken(usuarioEncontrado);
-    console.log("PUNTO DE CONTROL 9")
 
     return {
       statusCode: 200,
@@ -58,21 +57,22 @@ export async function loginService(userData) {
 
 export async function googleLoginService(token) {
   try {
-    console.log("PUNTO DE CONTROL 3")
     // Verificar el token con Google
     const response = await fetch(
       `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
     );
     const userInfo = await response.json();
-    console.log("PUNTO DE CONTROL 4", response)
-    console.log("PUNTO DE CONTROL 4.5", userInfo)
 
     if (userInfo.error) {
       return { statusCode: 400, msg: "Token inválido" };
     }
 
     // Buscar el usuario en la base de datos por el email
-    const usuarioEncontrado = await UserModel.findOne({ email: userInfo.email }).select('+contrasenia'); // Selecciona la contraseña aunque esté marcada con select: false
+    const usuarioEncontrado = await UserModel.findOne({ email: userInfo.email })
+      .select('+contrasenia')
+      .populate('mascotas');
+    // Realiza el populate de las mascotas
+    // Selecciona la contraseña aunque esté marcada con select: false
 
     if (!usuarioEncontrado) {
       return { statusCode: 404, msg: "UsuarioEncontrado no encontrado" };
@@ -106,7 +106,6 @@ export async function googleLoginService(token) {
     }
 
     // Emitir una sesión o token JWT
-    console.log("PUNTO DE CONTROL 5", usuarioEncontrado)
     const jwtToken = generateJwtToken(usuarioEncontrado);
 
     return {

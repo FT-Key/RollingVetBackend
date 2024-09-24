@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Schema, model } from "mongoose";
 
-const PLANES = ["Sin plan", "Básico", "Completo", "Premium"];
+// Constantes
 const ESTADOS_ANIMAL = ["Mascota", "En Adopción"];
 const ESPECIES = ["Perro", "Gato", "Ave", "Conejo", "Reptil", "Otro"];
 const VACUNAS = [
@@ -13,11 +13,13 @@ const VACUNAS = [
   "Bordetella",
 ];
 
+// Esquema de vacunas
 const VacunasSchema = new Schema({
   nombre: { type: String, required: true, enum: VACUNAS },
   fecha: { type: Date, required: true },
 });
 
+// Esquema de animales
 const AnimalSchema = new Schema({
   dueño: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" }, // Relación opcional con un usuario
   tipo: { type: String, enum: ESPECIES, required: true }, // Tipo de animal
@@ -26,7 +28,7 @@ const AnimalSchema = new Schema({
   edad: { type: Number, required: true }, // Edad en años o meses según el caso
   descripcion: { type: String }, // Información adicional
   vacunas: { type: [VacunasSchema], default: [] }, // Lista de vacunas aplicadas
-  plan: { type: String, enum: PLANES, default: "Básico" }, // Plan de cuidado
+  plan: { type: mongoose.Schema.Types.ObjectId, ref: "Plan", default: null }, // Referencia a un plan
   estado: { type: String, enum: ESTADOS_ANIMAL, required: true }, // Mascota o en adopción
   fotoUrl: { type: String }, // URL de la foto del animal
   ultimaVisitaVeterinaria: { type: Date }, // Fecha de la última visita al veterinario

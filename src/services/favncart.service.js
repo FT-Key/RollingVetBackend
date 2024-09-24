@@ -58,7 +58,7 @@ export const buyProductsMPService = async (productos, returnUrl) => {
       }
 
       return {
-        title: producto.nombre,
+        title: `${producto.nombre}`,
         quantity: prod.cantidad,
         unit_price: producto.precio,
         currency_id: 'ARS',
