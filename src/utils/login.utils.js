@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 // Función para generar un Token
 export const generateJwtToken = (userInfo) => {
@@ -12,6 +12,7 @@ export const generateJwtToken = (userInfo) => {
     nombre: userInfo.nombre || "",
     apellido: userInfo.apellido || "",
     fotoPerfil: userInfo.fotoPerfil || "",
+    mascotas: userInfo.mascotas || [],
   };
 
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "12h" });

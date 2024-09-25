@@ -3,11 +3,13 @@ import { getUsuario, getUsuarios, postUsuario, putUsuario, deleteUsuario, agrega
 import upload from '../middlewares/multer.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
 import { paginationMiddleware } from '../utils/pagination.js';
+import UserModel from '../models/usuario.schema.js'; // Modelo de usuarios
+import dynamicFilterMiddleware from '../middlewares/filter.js';
 
 const router = Router();
 
 /* GET */
-router.get('/', authTokenAndRole(['admin']), paginationMiddleware, getUsuarios);
+router.get('/', authTokenAndRole(['admin']), paginationMiddleware, dynamicFilterMiddleware(UserModel), getUsuarios);
 
 /* GET con parametro */
 router.get('/:idUsuario', authTokenAndRole(['admin']), getUsuario);

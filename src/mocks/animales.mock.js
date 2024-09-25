@@ -11,11 +11,12 @@ export const animales = [
     ],
     plan: "Completo",
     estado: "Mascota",
-    fotoUrl: "https://via.placeholder.com/150",
+    fotoUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1726443523/fnsrnuywjfk9ype7g8e2.png",
     ultimaVisitaVeterinaria: new Date("2023-05-20"),
     esterilizado: true,
     peso: 25,
     historialMedico: ["Castración en 2022"],
+    genero: "Macho",
   },
   {
     tipo: "Gato",
@@ -28,11 +29,12 @@ export const animales = [
     ],
     plan: "Básico",
     estado: "Mascota",
-    fotoUrl: "https://via.placeholder.com/150",
+    fotoUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1726444138/kghsupshmdzvju5jlnle.png",
     ultimaVisitaVeterinaria: new Date("2023-02-25"),
     esterilizado: true,
     peso: 5,
     historialMedico: ["Tratamiento de pulgas en 2023"],
+    genero: "Hembra",
   },
   {
     tipo: "Ave",
@@ -48,6 +50,7 @@ export const animales = [
     esterilizado: false,
     peso: 1,
     historialMedico: ["Tratamiento de parásitos en 2021"],
+    genero: "Macho",
   },
   {
     tipo: "Conejo",
@@ -65,6 +68,7 @@ export const animales = [
     esterilizado: false,
     peso: 2,
     historialMedico: [],
+    genero: "Macho",
   },
   {
     tipo: "Reptil",
@@ -80,6 +84,7 @@ export const animales = [
     esterilizado: false,
     peso: 1.5,
     historialMedico: [],
+    genero: "Macho",
   },
   {
     tipo: "Gato",
@@ -98,6 +103,7 @@ export const animales = [
     esterilizado: true,
     peso: 4,
     historialMedico: ["Cirugía dental en 2023"],
+    genero: "Hembra",
   },
   {
     tipo: "Perro",
@@ -116,6 +122,7 @@ export const animales = [
     esterilizado: false,
     peso: 12,
     historialMedico: ["Tratamiento de alergias en 2022"],
+    genero: "Macho",
   },
   {
     tipo: "Perro",
@@ -134,6 +141,7 @@ export const animales = [
     esterilizado: true,
     peso: 10,
     historialMedico: [],
+    genero: "Macho",
   },
   {
     tipo: "Gato",
@@ -152,6 +160,7 @@ export const animales = [
     esterilizado: true,
     peso: 8,
     historialMedico: ["Cirugía en 2021"],
+    genero: "Macho",
   },
   {
     tipo: "Conejo",
@@ -167,5 +176,6 @@ export const animales = [
     esterilizado: false,
     peso: 1.2,
     historialMedico: [],
+    genero: "Hembra",
   }
 ];

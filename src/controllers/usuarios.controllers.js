@@ -9,8 +9,9 @@ import {
 
 export const getUsuarios = async (req, res) => {
   try {
-    const result = await getUsuariosService(req.pagination);  // Llama al servicio con la paginación (puede ser null)
-    
+    const filters = req.filters || {}; // Obtener los filtros dinámicos
+    const result = await getUsuariosService(req.pagination, filters); // Pasar los filtros al servicio
+
     return res.status(result.statusCode).json({
       usuarios: result.usuarios,
       totalUsuarios: result.totalUsuarios,

@@ -3,11 +3,13 @@ import { getProductosController, getProductoController, postProductoController, 
 import upload from '../middlewares/multer.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
 import { paginationMiddleware } from '../utils/pagination.js';
+import ProductModel from '../models/producto.schema.js'; // Modelo de productos
+import dynamicFilterMiddleware from '../middlewares/filter.js';
 
 const router = Router();
 
 /* GET */
-router.get('/', paginationMiddleware, getProductosController);
+router.get('/', paginationMiddleware, dynamicFilterMiddleware(ProductModel), getProductosController);
 
 /* GET con parametro */
 router.get('/:idProducto', getProductoController);

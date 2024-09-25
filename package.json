@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "postinstall": "npm rebuild bcrypt --build-from-source"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +14,7 @@
   "description": "",
   "dependencies": {
     "@mercadopago/sdk-react": "^0.0.19",
-    "bcryptjs": "^2.4.3",
+    "bcrypt": "^5.1.1",
     "cloudinary": "^2.4.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -28,5 +29,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=16.x"
   }
 }

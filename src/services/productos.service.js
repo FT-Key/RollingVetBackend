@@ -1,22 +1,22 @@
 import cloudinary from "../helpers/cloudinary.config.js";
 import ProductModel from "../models/producto.schema.js";
 
-export const getProductosService = async (pagination = null) => {
+export const getProductosService = async (pagination = null, filters = {}) => {
   let productos;
-  let totalProductos = await ProductModel.countDocuments();  // Obtener el total de productos
-  
+  let totalProductos = await ProductModel.countDocuments(filters); // Contar solo los productos que coincidan con los filtros
+
   if (pagination) {
     const { skip, limit } = pagination;
-    productos = await ProductModel.find()
+    productos = await ProductModel.find(filters)
       .skip(skip)
       .limit(limit);
   } else {
-    productos = await ProductModel.find();  // Si no hay paginación, traer todos los productos
+    productos = await ProductModel.find(filters); // Si no hay paginación, aplicar solo los filtros
   }
 
   return {
     productos,
-    totalProductos,  // Retornar el total de productos en ambos casos
+    totalProductos,  // Retornar el total de productos
     statusCode: 200,
   };
 };

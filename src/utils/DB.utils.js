@@ -4,9 +4,11 @@ import { postAnimalService } from "../services/animales.service.js"; // Asumiend
 import UserModel from "../models/usuario.schema.js";
 import ProductModel from "../models/producto.schema.js";
 import AnimalModel from "../models/animal.schema.js"; // Asegúrate de tener el modelo para animales
+import PlanModel from "../models/plan.schema.js"; // Asegúrate de tener el modelo para planes
 import { usuarios } from "../mocks/usuarios.mock.js";
 import { productos } from "../mocks/productos.mock.js";
 import { animales } from "../mocks/animales.mock.js"; // Importar el array de animales
+import { planes } from "../mocks/planes.mock.js"; // Importar el array de planes
 import { encryptPassword } from "./register.utils.js";
 
 export function poblarDB() {
@@ -58,10 +60,45 @@ export function poblarDB() {
 
   const inicializarAnimales = async () => {
     try {
+      // Inicializar planes
+      const planesExistentes = await PlanModel.find();
+      
+      if (planesExistentes.length === 0) {
+        for (const plan of planes) {
+          const nuevoPlan = new PlanModel(plan);
+          await nuevoPlan.save();
+        }
+        console.log("Planes iniciales creados con éxito.");
+      } else {
+        console.log("La base de datos ya contiene planes.");
+      }
+  
+      // Obtener planes con sus _id
+      const planesCreados = await PlanModel.find();
+      const planBasico = planesCreados.find(p => p.nombre === "Básico")._id;
+      const planCompleto = planesCreados.find(p => p.nombre === "Completo")._id;
+      const planPremium = planesCreados.find(p => p.nombre === "Premium")._id;
+  
+      // Inicializar animales
       const animalesExistentes = await AnimalModel.find();
-
+  
       if (animalesExistentes.length === 0) {
         for (const animal of animales) {
+          // Asignar el plan correspondiente según el nombre del plan en el array
+          switch (animal.plan) {
+            case "Básico":
+              animal.plan = planBasico;
+              break;
+            case "Completo":
+              animal.plan = planCompleto;
+              break;
+            case "Premium":
+              animal.plan = planPremium;
+              break;
+            default:
+              animal.plan = null;  // O un plan por defecto
+          }
+  
           const resultado = await postAnimalService(animal);
           console.log(resultado.mensaje);
         }
@@ -70,9 +107,9 @@ export function poblarDB() {
         console.log("La base de datos ya contiene animales.");
       }
     } catch (error) {
-      console.error("Error al inicializar animales:", error);
+      console.error("Error al inicializar animales y planes:", error);
     }
-  };
+  };  
 
   inicializarUsuarios();
   inicializarProductos();

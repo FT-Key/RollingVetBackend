@@ -4,38 +4,58 @@ import FavModel from "../models/favoritos.schema.js";
 import AnimalModel from "../models/animal.schema.js";
 import cloudinary from "../helpers/cloudinary.config.js";
 
-export const getUsuariosService = async (pagination = null) => {
+export const getUsuariosService = async (pagination = null, filters = {}) => {
   let usuarios;
-  let totalUsuarios = await UserModel.countDocuments(); // Obtener el total de usuarios en cualquier caso
+  let totalUsuarios = await UserModel.countDocuments(filters); // Contar solo los usuarios que coincidan con los filtros
 
   if (pagination) {
     const { skip, limit } = pagination;
-    usuarios = await UserModel.find()
+    usuarios = await UserModel.find(filters)
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .populate({
+        path: 'mascotas',
+        model: 'Animal', // Especificar el modelo de referencia
+      });
   } else {
-    usuarios = await UserModel.find(); // Si no hay paginación, traer todos los usuarios
+    usuarios = await UserModel.find(filters)
+      .populate({
+        path: 'mascotas',
+        model: 'Animal',
+      }); // Si no hay paginación, aplicar solo los filtros con populate
   }
 
   return {
     usuarios,
-    totalUsuarios,  // Enviar el total de usuarios en ambos casos
+    totalUsuarios,  // Enviar el total de usuarios
     statusCode: 200,
   };
 };
 
 export const getUsuarioService = async (idUsuario) => {
-  const usuario = await UserModel.findOne({ _id: idUsuario });
+  try {
+    const usuario = await UserModel.findOne({ _id: idUsuario })
+      .populate({
+        path: 'mascotas',
+        model: 'Animal', // Especificas el modelo de referencia
+      });
 
-  if (usuario) {
+    if (usuario) {
+      return {
+        usuario,
+        statusCode: 200,
+      };
+    } else {
+      return {
+        mensaje: 'Usuario no encontrado',
+        statusCode: 404,
+      };
+    }
+  } catch (error) {
     return {
-      usuario,
-      statusCode: 200,
-    };
-  } else {
-    return {
-      mensaje: "Usuario no encontrado",
-      statusCode: 404,
+      mensaje: 'Error al obtener el usuario',
+      statusCode: 500,
+      error: error.message,
     };
   }
 };
@@ -65,49 +85,59 @@ export const postUsuarioService = async (nuevoUsuarioData) => {
 };
 
 export const putUsuarioService = async (idUsuario, usuarioData) => {
-  // Busca al usuario por su id
+
   const usuario = await UserModel.findById(idUsuario).populate('mascotas');
 
-  // Si se envía una nueva foto de perfil
   if (usuarioData.fotoPerfil) {
     if (!usuario.fotosPerfil.includes(usuarioData.fotoPerfil)) {
       usuario.fotosPerfil.push(usuarioData.fotoPerfil);
     }
   }
 
-  // Verificar si se envía el array de mascotas desde el frontend
-  if (usuarioData.mascotas && usuarioData.mascotas.length > 0) {
-    // Recorrer las mascotas enviadas desde el frontend
-    for (let mascotaFrontend of usuarioData.mascotas) {
-      // Verificar si ya existe una mascota en el array del usuario con el mismo nombre y tipo (puedes cambiar esto por otras validaciones más precisas)
-      const mascotaExiste = usuario.mascotas.some(mascotaDB =>
-        mascotaDB.nombre === mascotaFrontend.nombre && mascotaDB.tipo === mascotaFrontend.tipo
-      );
+  // Solo procesar mascotas si el campo `mascotas` está presente (no undefined o null)
+  if (usuarioData.mascotas !== undefined && usuarioData.mascotas !== null) {
 
-      if (!mascotaExiste) {
-        // Si la mascota no existe, crear una nueva instancia de Animal
+    // Mascotas que el usuario tenía antes de la actualización
+    const mascotasDB = usuario.mascotas.map(m => m._id.toString());
+
+    // Mascotas que vienen del frontend (nuevas y existentes)
+    const mascotasActualizadas = usuarioData.mascotas;
+
+    // Identificar las mascotas eliminadas
+    const mascotasEliminadas = mascotasDB.filter(idMascota => !mascotasActualizadas.some(m => m._id && m._id.toString() === idMascota));
+
+    // Eliminar las mascotas eliminadas
+    if (mascotasEliminadas.length > 0) {
+      for (const idMascota of mascotasEliminadas) {
+        usuario.mascotas = usuario.mascotas.filter(mascota => mascota._id.toString() !== idMascota);
+        await AnimalModel.findByIdAndDelete(idMascota);
+      }
+    }
+
+    // Procesar las nuevas mascotas
+    for (let mascotaFrontend of mascotasActualizadas) {
+      if (!mascotaFrontend._id) { // Si no tiene _id, es nueva
         const nuevaMascota = new AnimalModel({
-          dueño: usuario._id, // El dueño es el usuario actual
+          duenio: usuario._id,
           tipo: mascotaFrontend.tipo,
           raza: mascotaFrontend.raza,
           nombre: mascotaFrontend.nombre,
           edad: mascotaFrontend.edad,
-          estado: "Mascota" // Asumimos que es una mascota
+          estado: "Mascota",
+          fotoUrl: "https://via.placeholder.com/150"
         });
-
-        // Guardar la nueva mascota en la colección de animales
         const mascotaGuardada = await nuevaMascota.save();
-
-        // Agregar la referencia de la nueva mascota al array de mascotas del usuario
-        usuario.mascotas.push(mascotaGuardada._id);
+        usuario.mascotas.push(mascotaGuardada._id.toString());
+      } else {
+        // Aquí podrías manejar la actualización de una mascota existente si es necesario
       }
     }
   }
 
-  // Actualizar el resto de la información del usuario
-  Object.assign(usuario, usuarioData);
+  // Actualizar las propiedades del usuario (excepto mascotas)
+  const { mascotas, ...restoDeUsuarioData } = usuarioData;
+  Object.assign(usuario, restoDeUsuarioData);
 
-  // Guardar los cambios del usuario
   const usuarioActualizado = await usuario.save();
 
   return {
