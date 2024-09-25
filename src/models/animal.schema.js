@@ -12,6 +12,10 @@ const VACUNAS = [
   "Leptospirosis",
   "Bordetella",
 ];
+const GENEROS = [
+  "Macho",
+  "Hembra",
+];
 
 // Esquema de vacunas
 const VacunasSchema = new Schema({
@@ -21,16 +25,17 @@ const VacunasSchema = new Schema({
 
 // Esquema de animales
 const AnimalSchema = new Schema({
-  dueño: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" }, // Relación opcional con un usuario
+  duenio: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" }, // Relación opcional con un usuario
   tipo: { type: String, enum: ESPECIES, required: true }, // Tipo de animal
   raza: { type: String },
   nombre: { type: String, required: true },
   edad: { type: Number, required: true }, // Edad en años o meses según el caso
+  genero: { type: String, required: true, enum: GENEROS },
   descripcion: { type: String }, // Información adicional
   vacunas: { type: [VacunasSchema], default: [] }, // Lista de vacunas aplicadas
   plan: { type: mongoose.Schema.Types.ObjectId, ref: "Plan", default: null }, // Referencia a un plan
   estado: { type: String, enum: ESTADOS_ANIMAL, required: true }, // Mascota o en adopción
-  fotoUrl: { type: String }, // URL de la foto del animal
+  fotoUrl: { type: String, default: "https://via.placeholder.com/150" }, // URL de la foto del animal
   ultimaVisitaVeterinaria: { type: Date }, // Fecha de la última visita al veterinario
   esterilizado: { type: Boolean, default: false }, // Si el animal está esterilizado
   peso: { type: Number }, // Peso del animal en kg

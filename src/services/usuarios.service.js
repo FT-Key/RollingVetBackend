@@ -85,7 +85,7 @@ export const postUsuarioService = async (nuevoUsuarioData) => {
 };
 
 export const putUsuarioService = async (idUsuario, usuarioData) => {
-  console.log("ENTRA AQUI 1");
+
   const usuario = await UserModel.findById(idUsuario).populate('mascotas');
 
   if (usuarioData.fotoPerfil) {
@@ -94,39 +94,43 @@ export const putUsuarioService = async (idUsuario, usuarioData) => {
     }
   }
 
-  // Mascotas que el usuario tenía antes de la actualización
-  const mascotasDB = usuario.mascotas.map(m => m._id.toString());
+  // Solo procesar mascotas si el campo `mascotas` está presente (no undefined o null)
+  if (usuarioData.mascotas !== undefined && usuarioData.mascotas !== null) {
 
-  // Mascotas que vienen del frontend (nuevas y existentes)
-  const mascotasActualizadas = usuarioData.mascotas || [];
+    // Mascotas que el usuario tenía antes de la actualización
+    const mascotasDB = usuario.mascotas.map(m => m._id.toString());
 
-  // Identificar las mascotas eliminadas
-  const mascotasEliminadas = mascotasDB.filter(idMascota => !mascotasActualizadas.some(m => m._id && m._id.toString() === idMascota));
+    // Mascotas que vienen del frontend (nuevas y existentes)
+    const mascotasActualizadas = usuarioData.mascotas;
 
-  // Eliminar las mascotas eliminadas
-  if (mascotasEliminadas.length > 0) {
-    for (const idMascota of mascotasEliminadas) {
-      usuario.mascotas = usuario.mascotas.filter(mascota => mascota._id.toString() !== idMascota);
-      await AnimalModel.findByIdAndDelete(idMascota);
+    // Identificar las mascotas eliminadas
+    const mascotasEliminadas = mascotasDB.filter(idMascota => !mascotasActualizadas.some(m => m._id && m._id.toString() === idMascota));
+
+    // Eliminar las mascotas eliminadas
+    if (mascotasEliminadas.length > 0) {
+      for (const idMascota of mascotasEliminadas) {
+        usuario.mascotas = usuario.mascotas.filter(mascota => mascota._id.toString() !== idMascota);
+        await AnimalModel.findByIdAndDelete(idMascota);
+      }
     }
-  }
 
-  // Procesar las nuevas mascotas
-  for (let mascotaFrontend of mascotasActualizadas) {
-    if (!mascotaFrontend._id) { // Si no tiene _id, es nueva
-      const nuevaMascota = new AnimalModel({
-        dueño: usuario._id,
-        tipo: mascotaFrontend.tipo,
-        raza: mascotaFrontend.raza,
-        nombre: mascotaFrontend.nombre,
-        edad: mascotaFrontend.edad,
-        estado: "Mascota",
-        fotoUrl: "https://via.placeholder.com/150"
-      });
-      const mascotaGuardada = await nuevaMascota.save();
-      usuario.mascotas.push(mascotaGuardada._id.toString());
-    } else {
-      // Aquí podrías manejar la actualización de una mascota existente si es necesario
+    // Procesar las nuevas mascotas
+    for (let mascotaFrontend of mascotasActualizadas) {
+      if (!mascotaFrontend._id) { // Si no tiene _id, es nueva
+        const nuevaMascota = new AnimalModel({
+          duenio: usuario._id,
+          tipo: mascotaFrontend.tipo,
+          raza: mascotaFrontend.raza,
+          nombre: mascotaFrontend.nombre,
+          edad: mascotaFrontend.edad,
+          estado: "Mascota",
+          fotoUrl: "https://via.placeholder.com/150"
+        });
+        const mascotaGuardada = await nuevaMascota.save();
+        usuario.mascotas.push(mascotaGuardada._id.toString());
+      } else {
+        // Aquí podrías manejar la actualización de una mascota existente si es necesario
+      }
     }
   }
 

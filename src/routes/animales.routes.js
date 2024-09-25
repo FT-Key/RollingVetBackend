@@ -5,7 +5,8 @@ import {
   postAnimalController,
   putAnimalController,
   deleteAnimalController,
-  agregarFotoAnimalController
+  agregarFotoAnimalController,
+  createAnimalController
 } from '../controllers/animales.controllers.js';
 import upload from '../middlewares/multer.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
@@ -22,15 +23,16 @@ router.get('/', authTokenAndRole(['admin', 'cliente']), paginationMiddleware, dy
 router.get('/:idAnimal', authTokenAndRole(['admin', 'cliente']), getAnimalController);
 
 /* POST */
+router.post('/createAnimal', authTokenAndRole(['admin', 'cliente']), createAnimalController);
 router.post('/', authTokenAndRole(['admin', 'cliente']), postAnimalController);
 
 /* PUT */
 router.put('/:idAnimal', authTokenAndRole(['admin', 'cliente']), putAnimalController);
 
 /* DELETE */
-router.delete('/:idAnimal', authTokenAndRole(['admin']), deleteAnimalController);
+router.delete('/:idAnimal', authTokenAndRole(['admin', 'cliente']), deleteAnimalController);
 
 /* SUBIR FOTO DE ANIMAL*/
-router.post('/agregarFotoAnimal/:idAnimal', authTokenAndRole(['admin']), upload.single('image'), agregarFotoAnimalController);
+router.post('/agregarFotoAnimal/:idAnimal', authTokenAndRole(['admin', 'cliente']), upload.single('image'), agregarFotoAnimalController);
 
 export default router;
