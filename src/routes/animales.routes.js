@@ -17,10 +17,10 @@ import dynamicFilterMiddleware from '../middlewares/filter.js';
 const router = Router();
 
 /* GET */
-router.get('/', authTokenAndRole(['admin', 'cliente']), paginationMiddleware, dynamicFilterMiddleware(AnimalModel), getAnimalsController);
+router.get('/', paginationMiddleware, dynamicFilterMiddleware(AnimalModel), getAnimalsController);
 
 /* GET con parametro */
-router.get('/:idAnimal', authTokenAndRole(['admin', 'cliente']), getAnimalController);
+router.get('/:idAnimal', getAnimalController);
 
 /* POST */
 router.post('/createAnimal', authTokenAndRole(['admin', 'cliente']), createAnimalController);
