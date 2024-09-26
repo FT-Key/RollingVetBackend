@@ -1,93 +1,7 @@
-// import TurnoModel from "../models/turnos.schema.js";
 import FechaTurnoModel from "../models/fechaTurnos.schema.js";
-import { normalizeDate, obtenerFechasDeSemana, HORAS_TURNOS, verificarHoraEnRango, ordenarTurnosPorHora } from "../utils/date.utils.js";
+import { normalizeDate, obtenerFechasDeSemana, verificarHoraEnRango, ordenarTurnosPorHora } from "../utils/date.utils.js";
+import { HORAS_TURNOS } from '../mocks/turnos.mock.js';
 import moment from 'moment-timezone';
-import { MercadoPagoConfig, Preference } from "mercadopago";
-
-/* export const obtenerTurnoService = async (pagination = null) => {
-  try {
-    // Obtener el número total de turnos
-    let totalTurnos = await FechaTurnoModel.countDocuments();
-
-    // Calcular skip y limit si la paginación existe
-    let fechasTurno;
-    if (pagination) {
-      const { skip, limit } = pagination;
-      fechasTurno = await FechaTurnoModel.find()
-        .skip(skip)
-        .limit(limit)
-        .populate({
-          path: 'turnos.usuario', // Hacer populate del usuario dentro de cada turno
-          select: 'nombre email',
-        });
-    } else {
-      // Si no hay paginación, traer todos los turnos
-      fechasTurno = await FechaTurnoModel.find().populate({
-        path: 'turnos.usuario',
-        select: 'nombre email',
-      });
-    }
-
-    // Llamar a la función para actualizar los turnos que ya pasaron
-    await actualizarTurnosNoAsistidos(fechasTurno);
-
-    // Mapear los turnos con los usuarios poblados
-    const turnosConUsuarios = fechasTurno.map(turno => ({
-      ...turno._doc,
-      usuario: turno.usuario ? turno.usuario : null
-    }));
-
-    // Devolver los turnos y el total de turnos
-    return {
-      fechaTurnos: turnosConUsuarios,
-      totalTurnos,
-      statusCode: 200,
-    };
-  } catch (error) {
-    throw new Error(error.message || 'Error al obtener todos los turnos');
-  }
-};
-
-export const obtenerTurnoService = async (fecha, user) => {
-  try {
-    // Normalizar la fecha
-    const fechaNormalizada = normalizeDate(fecha);
-
-    // Buscar el documento FechaTurno por la fecha normalizada
-    const fechaTurno = await FechaTurnoModel.findOne({ fecha: fechaNormalizada })
-      .populate('creador', 'nombre')
-      .populate({
-        path: 'turnos', // Nombre del campo en FechaTurno que contiene los turnos
-        populate: {
-          path: 'usuario', // Nombre del campo en Turno que referencia al Usuario
-          select: 'nombre email' // Campos del usuario que deseas obtener
-        }
-      });
-
-    // Si no existe la fecha, retornar null
-    if (!fechaTurno) return null;
-
-    // Envolver fechaTurno en un array y llamar a la función para actualizar los turnos que ya pasaron
-    await actualizarTurnosNoAsistidos([fechaTurno]);
-
-    // Verificar si el usuario ya tiene un turno para ese día
-    const turnoExistente = fechaTurno.turnos.find(turno =>
-      turno.usuario?.toString() === user._id &&
-      (turno.estado === 'pendiente' || turno.estado === 'confirmado' || turno.estado === 'libre')
-    );
-
-    if (turnoExistente && user.rol != 'admin') {
-      // El usuario ya tiene un turno para ese día
-      throw new Error('Ya tienes un turno reservado para este día.');
-    }
-
-    // Devolver los turnos si la fecha existe y el usuario no tiene un turno reservado
-    return fechaTurno;
-  } catch (error) {
-    // Lanza el error para que el controlador lo maneje
-    throw new Error(error.message || 'Error al obtener los turnos');
-  }
-}; */
 
 export const obtenerTurnosService = async (pagination = null, filters = {}, user) => {
   try {
@@ -447,7 +361,7 @@ export const actualizarTurnosNoAsistidos = async (fechasTurnos) => {
         const diferenciaEnMinutos = horaActual.diff(turnoHora, 'minutes');
 
         // Si han pasado más de 2 horas (120 minutos)
-        if (diferenciaEnMinutos >= 120 && turno.usuario && ['pendiente', 'confirmado'].includes(turno.estado)) {
+        if (diferenciaEnMinutos >= 30 && turno.usuario && !['completado'].includes(turno.estado)) {
           // Si el turno tiene usuario y no está completado, cambiar a 'no asistido'
           turno.estado = 'no asistido';
           await FechaTurnoModel.findOneAndUpdate(

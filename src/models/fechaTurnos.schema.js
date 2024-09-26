@@ -1,29 +1,5 @@
 import mongoose from 'mongoose';
-
-// Definir los tipos de atención
-const TIPOS_ATENCION = [
-  'Consulta de producto',
-  'Soporte técnico',
-  'Asesoría en compras',
-  'Revisión de producto',
-  'Consulta sobre garantía',
-  'Atención post-venta',
-  'Asesoría en productos exclusivos',
-];
-
-// Definir los posibles estados para el turno
-const ESTADOS_TURNO = [
-  'libre',
-  'pendiente',
-  'completado',
-  'cancelado',
-  'no asistido',
-  'confirmado',
-  'caducado'
-];
-
-// Definir los tipos de modalidad
-const MODALIDADES = ['presencial', 'online'];
+import { TIPOS_ATENCION, ESTADOS_TURNO, MODALIDADES } from '../mocks/turnos.mock.js';
 
 // Definir el subdocumento Turno
 const turnoSchema = new mongoose.Schema({

@@ -1,8 +1,6 @@
 //import moment from 'moment'; // Usamos moment.js para manejar las fechas
 import moment from 'moment-timezone'; // Usamos moment timezone para establecer la zona horaria
 
-export const HORAS_TURNOS = ['09:00', '11:00', '13:00', '15:00', '17:00'];
-
 // Función para obtener la hora actual con una zona horaria específica
 export const obtenerHoraActual = (zonaHoraria = 'America/Argentina/Buenos_Aires') => {
   return moment().tz(zonaHoraria);
