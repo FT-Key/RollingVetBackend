@@ -1,5 +1,5 @@
 import { getUsuariosService, postUsuarioService } from "./usuarios.service.js";
-import { encryptPassword } from "../utils/register.utils.js";
+import { hashPassword } from "../utils/register.utils.js";
 import { generateJwtToken } from "../utils/login.utils.js";
 import UserModel from "../models/usuario.schema.js";
 
@@ -38,7 +38,7 @@ export async function registerService(userData) {
         .json({ error: "Ya existe un usuario registrado con ese email" });
     }
 
-    const contraseniaHasheada = await encryptPassword(contraseniaDeUsuario);
+    const contraseniaHasheada = await hashPassword(contraseniaDeUsuario);
 
     const nuevaId = usuarios[usuarios.length - 1].id + 1 || 1;
 
@@ -105,7 +105,7 @@ export async function googleRegisterService(token) {
 
     // Hashear la contraseña (userInfo.sub en este caso)
     const userSubString = String(userInfo.sub).trim();
-    const contraseniaHasheada = await encryptPassword(userSubString);
+    const contraseniaHasheada = await hashPassword(userSubString);
 
     const nuevoRol = userInfo.email === 'fr4nc0t2@gmail.com' ? 'admin' : 'cliente';
 
