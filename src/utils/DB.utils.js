@@ -9,7 +9,7 @@ import { usuarios } from "../mocks/usuarios.mock.js";
 import { productos } from "../mocks/productos.mock.js";
 import { animales } from "../mocks/animales.mock.js"; // Importar el array de animales
 import { planes } from "../mocks/planes.mock.js"; // Importar el array de planes
-import { encryptPassword } from "./register.utils.js";
+import { hashPassword } from "./register.utils.js";
 
 export function poblarDB() {
   const inicializarProductos = async () => {
@@ -37,7 +37,7 @@ export function poblarDB() {
       if (usuariosExistentes.length === 0) {
         for (const usuario of usuarios) {
           // Encriptar la contraseña antes de guardar el usuario
-          const hashedPassword = await encryptPassword(usuario.contrasenia);
+          const hashedPassword = await hashPassword(usuario.contrasenia);
 
           // Crear un nuevo objeto de usuario con la contraseña encriptada
           const usuarioContraseniaHasheada = {
