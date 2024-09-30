@@ -9,14 +9,15 @@ export const productos = [
     fechaDeIngreso: "2024-09-06",
     proveedor: "Protección Animal Inc.",
     codigoDeBarras: "0123456789101",
-    imagenUrl: "https://via.placeholder.com/150",
+    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1725775946/mpxvdp4kfesoqijxeatw.webp",
     calificaciones: 0,
     resenias: [],
     garantia: "6 meses",
     descuento: 10, // en porcentaje
     bloqueado: false,
     imagenesUrls: [
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1725775946/mpxvdp4kfesoqijxeatw.webp"
     ]
   },
   {
@@ -29,14 +30,15 @@ export const productos = [
     fechaDeIngreso: "2024-09-05",
     proveedor: "Estética Canina S.A.",
     codigoDeBarras: "0123456789102",
-    imagenUrl: "https://via.placeholder.com/150",
+    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1725812486/wc8bbylyidvmcxs9piqk.webp",
     calificaciones: 0,
     resenias: [],
     garantia: "Sin garantía",
     descuento: 5,
     bloqueado: false,
     imagenesUrls: [
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1725812486/wc8bbylyidvmcxs9piqk.webp"
     ]
   },
   {
@@ -49,14 +51,15 @@ export const productos = [
     fechaDeIngreso: "2024-08-30",
     proveedor: "NutriCat Pro",
     codigoDeBarras: "0123456789103",
-    imagenUrl: "https://via.placeholder.com/150",
+    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1727725711/cy1uh88t7k2vm0mynwwj.webp",
     calificaciones: 0,
     resenias: [],
     garantia: "12 meses",
     descuento: 15,
     bloqueado: false,
     imagenesUrls: [
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1727725711/cy1uh88t7k2vm0mynwwj.webp"
     ]
   },
   {
@@ -69,14 +72,15 @@ export const productos = [
     fechaDeIngreso: "2024-09-01",
     proveedor: "Juguetes Mascotas S.L.",
     codigoDeBarras: "0123456789104",
-    imagenUrl: "https://via.placeholder.com/150",
+    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1727726215/qrhmjwogmdbxtxz0llnv.png",
     calificaciones: 0,
     resenias: [],
     garantia: "3 meses",
     descuento: 0,
     bloqueado: false,
     imagenesUrls: [
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1727726215/qrhmjwogmdbxtxz0llnv.png"
     ]
   },
   {
@@ -89,14 +93,15 @@ export const productos = [
     fechaDeIngreso: "2024-09-03",
     proveedor: "Cuidado Animal Ltd.",
     codigoDeBarras: "0123456789105",
-    imagenUrl: "https://via.placeholder.com/150",
+    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1727726179/sblgbjclojbzwpcnwxeh.jpg",
     calificaciones: 0,
     resenias: [],
     garantia: "6 meses",
     descuento: 10,
     bloqueado: false,
     imagenesUrls: [
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1727726179/sblgbjclojbzwpcnwxeh.jpg"
     ]
   },
   {
@@ -109,14 +114,15 @@ export const productos = [
     fechaDeIngreso: "2024-08-25",
     proveedor: "Mascotas y Hogar",
     codigoDeBarras: "0123456789106",
-    imagenUrl: "https://via.placeholder.com/150",
+    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1727726130/xp8dqdbk3q0p4mtecwsy.jpg",
     calificaciones: 0,
     resenias: [],
     garantia: "1 año",
     descuento: 20,
     bloqueado: false,
     imagenesUrls: [
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1727726130/xp8dqdbk3q0p4mtecwsy.jpg"
     ]
   },
   {
@@ -129,14 +135,15 @@ export const productos = [
     fechaDeIngreso: "2024-09-04",
     proveedor: "Acuarios Del Mar",
     codigoDeBarras: "0123456789107",
-    imagenUrl: "https://via.placeholder.com/150",
+    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1727726113/yvluqmlthscq6ivo4ga8.png",
     calificaciones: 0,
     resenias: [],
     garantia: "Sin garantía",
     descuento: 0,
     bloqueado: false,
     imagenesUrls: [
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1727726113/yvluqmlthscq6ivo4ga8.png"
     ]
   }
 ];

@@ -18,6 +18,7 @@ import favncartRouter from "../routes/favncart.routes.js";
 import turnosRouter from "../routes/turnos.routes.js";
 import animalsRouter from "../routes/animales.routes.js";
 import plansRouter from "../routes/planes.routes.js";
+import contactRouter from "../routes/contacto.routes.js";
 
 class Server {
   constructor(puerto) {
@@ -60,6 +61,7 @@ class Server {
     this.app.use("/turnos", turnosRouter);
     this.app.use("/animales", animalsRouter);
     this.app.use("/planes", plansRouter);
+    this.app.use("/contacto", contactRouter);
     this.app.get("/api/hello", (req, res) => {
       res.json({ message: "Hello from the server!" });
     });
