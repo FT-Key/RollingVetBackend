@@ -74,15 +74,17 @@ export const deleteProductoService = async (idProducto) => {
 };
 
 export const agregarImagenProductoService = async (idProducto, file) => {
+  console.log("SUBIENDO FOTO...")
   const producto = await ProductModel.findById(idProducto);
   const imagen = await cloudinary.uploader.upload(file.path);
   producto.imagenUrl = imagen.secure_url;
   if (!producto.imagenesUrls.includes(imagen.secure_url)) {
     producto.imagenesUrls.push(imagen.secure_url);
   }
-
+  
   await producto.save();
-
+  
+  console.log("FOTO SUBIDA")
   return {
     msg: 'Imagen cargada',
     statusCode: 200,
