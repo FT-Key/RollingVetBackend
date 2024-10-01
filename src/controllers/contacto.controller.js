@@ -1,4 +1,4 @@
-import { postContactoService } from '../services/contacto.service.js';
+import { postContactoService, postDonationService } from '../services/contacto.service.js';
 
 export const postContactoController = async (req, res) => {
   const { nombre, email, telefono, asunto, mensaje } = req.body;
@@ -11,5 +11,17 @@ export const postContactoController = async (req, res) => {
   } catch (error) {
     console.error('Error al enviar el correo:', error);
     return res.status(500).json({ error: 'Error al enviar el correo.' });
+  }
+};
+
+export const postDonationController = async (req, res) => {
+  const { amount, paymentMethod, returnUrl } = req.body; // Ahora recibimos el método de pago también
+
+  try {
+    const donationResponse = await postDonationService(amount, paymentMethod, returnUrl);
+    return res.status(donationResponse.statusCode).json(donationResponse);
+  } catch (error) {
+    console.error('Error al procesar la donación:', error);
+    return res.status(500).json({ error: error.message }); // Devuelve el mensaje de error para mayor claridad
   }
 };
