@@ -3,7 +3,6 @@ import { closeLoginService, googleLoginService, loginService } from "../services
 export const loginController = async (req, res) => {
   try {
     const usuarioData = req.body;
-    console.log(req.body)
 
     // Transforma el objeto recibido al formato requerido
     const transformedData = {
