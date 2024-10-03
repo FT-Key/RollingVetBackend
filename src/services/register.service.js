@@ -87,9 +87,12 @@ export async function googleRegisterService(token) {
     const usuarios = respuesta.usuarios;
 
     // Verificar el token con Google
-    const responseGoogle = await fetch(
-      `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
-    );
+    const responseGoogle = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Usa el accessToken para esta llamada
+      },
+    });
+
     const userInfo = await responseGoogle.json();
 
     if (userInfo.error) {
