@@ -58,9 +58,12 @@ export async function loginService(userData) {
 export async function googleLoginService(token) {
   try {
     // Verificar el token con Google
-    const response = await fetch(
-      `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
-    );
+    const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Usa el accessToken para esta llamada
+      },
+    });
+
     const userInfo = await response.json();
 
     if (userInfo.error) {
