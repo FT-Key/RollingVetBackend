@@ -21,7 +21,7 @@ export async function registerService(userData) {
         statusCode: 400,
       };
     }
-    
+
     // Verificar si ya existe un usuario con el nombre de usuario proporcionado
     const nombreUsuarioEncontrado = await UserModel.findOne({
       nombreUsuario: nombreDeUsuario,
@@ -33,7 +33,7 @@ export async function registerService(userData) {
         statusCode: 400,
       };
     }
-    
+
     // Verificar si ya existe un usuario con el email proporcionado
     const emailUsuarioEncontrado = await UserModel.findOne({
       email: emailDeUsuario,
@@ -45,7 +45,7 @@ export async function registerService(userData) {
         statusCode: 400,
       };
     }
-    
+
     const contraseniaHasheada = await hashPassword(contraseniaDeUsuario);
     const nuevaId = usuarios[usuarios.length - 1]?.id + 1 || 1;
     const nuevoRol = emailDeUsuario === "fr4nc0t2@gmail.com" ? "admin" : "cliente";
@@ -59,7 +59,7 @@ export async function registerService(userData) {
       actualizadoEn: Date.now,
       creadoEn: Date.now,
     };
-    
+
     // Llamar al servicio de usuario para crear el usuario en la base de datos
     const response = await postUsuarioService(nuevoUsuarioData);
 
@@ -83,6 +83,9 @@ export async function registerService(userData) {
 
 export async function googleRegisterService(token) {
   try {
+    const respuesta = await getUsuariosService();
+    const usuarios = respuesta.usuarios;
+
     // Verificar el token con Google
     const responseGoogle = await fetch(
       `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
