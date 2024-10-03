@@ -67,13 +67,23 @@ export const getAnimalService = async (idAnimal) => {
 // Crear un nuevo animal
 export const postAnimalService = async (nuevoAnimalData) => {
   const nuevoAnimal = new AnimalModel(nuevoAnimalData);
-  await nuevoAnimal.save();
 
-  return {
-    mensaje: "Animal creado con éxito!",
-    statusCode: 201,
-    nuevoAnimal,
-  };
+  try {
+    await nuevoAnimal.save();
+    console.log("Punto de control 4");
+    return {
+      mensaje: "Animal creado con éxito!",
+      statusCode: 201,
+      nuevoAnimal,
+    };
+  } catch (error) {
+    console.error("Error al crear el animal:", error.message);
+    return {
+      mensaje: "Error al crear el animal",
+      statusCode: 500,
+      error: error.message,
+    };
+  }
 };
 
 // Actualizar un animal existente
