@@ -38,15 +38,24 @@ export const getProductoService = async (idProducto) => {
 };
 
 export const postProductoService = async (nuevoProductoData) => {
-
   const nuevoProducto = await ProductModel(nuevoProductoData);
-  await nuevoProducto.save();
 
-  return {
-    mensaje: "Producto creado con éxito!",
-    statusCode: 201,
-    nuevoProducto,
-  };
+  try {
+    await nuevoProducto.save();
+    console.log("Punto de control 4");
+    return {
+      mensaje: "Producto creado con éxito!",
+      statusCode: 201,
+      nuevoProducto,
+    };
+  } catch (error) {
+    console.error("Error al crear el producto:", error.message);
+    return {
+      mensaje: "Error al crear el producto",
+      statusCode: 500,
+      error: error.message,
+    };
+  }
 };
 
 export const putProductoService = async (idProducto, productoData) => {
@@ -81,9 +90,9 @@ export const agregarImagenProductoService = async (idProducto, file) => {
   if (!producto.imagenesUrls.includes(imagen.secure_url)) {
     producto.imagenesUrls.push(imagen.secure_url);
   }
-  
+
   await producto.save();
-  
+
   console.log("FOTO SUBIDA")
   return {
     msg: 'Imagen cargada',

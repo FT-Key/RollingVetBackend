@@ -5,44 +5,50 @@ import UserModel from "../models/usuario.schema.js";
 
 export async function registerService(userData) {
   try {
+    const respuesta = await getUsuariosService();
+    const usuarios = respuesta.usuarios;
+
     const {
-      nombreDeUsuario,
-      emailDeUsuario,
-      contraseniaDeUsuario,
-      confContraseniaDeUsuario,
+      userName: nombreDeUsuario,
+      userEmail: emailDeUsuario,
+      userPass: contraseniaDeUsuario,
+      userPassConf: confContraseniaDeUsuario,
     } = userData;
 
     if (confContraseniaDeUsuario !== contraseniaDeUsuario) {
-      return res.status(400).json({ error: "Las contraseñas no coinciden" });
+      return {
+        mensaje: "Las contraseñas no coinciden",
+        statusCode: 400,
+      };
     }
-
+    
     // Verificar si ya existe un usuario con el nombre de usuario proporcionado
     const nombreUsuarioEncontrado = await UserModel.findOne({
       nombreUsuario: nombreDeUsuario,
     });
 
     if (nombreUsuarioEncontrado) {
-      return res
-        .status(400)
-        .json({ error: "Ya existe un usuario registrado con ese nombre de usuario" });
+      return {
+        mensaje: "Ya existe un usuario registrado con ese nombre de usuario",
+        statusCode: 400,
+      };
     }
-
+    
     // Verificar si ya existe un usuario con el email proporcionado
     const emailUsuarioEncontrado = await UserModel.findOne({
       email: emailDeUsuario,
     });
 
     if (emailUsuarioEncontrado) {
-      return res
-        .status(400)
-        .json({ error: "Ya existe un usuario registrado con ese email" });
+      return {
+        mensaje: "Ya existe un usuario registrado con ese email",
+        statusCode: 400,
+      };
     }
-
+    
     const contraseniaHasheada = await hashPassword(contraseniaDeUsuario);
-
-    const nuevaId = usuarios[usuarios.length - 1].id + 1 || 1;
-
-    const nuevoRol = userInfo.email === 'fr4nc0t2@gmail.com' ? 'admin' : 'cliente';
+    const nuevaId = usuarios[usuarios.length - 1]?.id + 1 || 1;
+    const nuevoRol = emailDeUsuario === "fr4nc0t2@gmail.com" ? "admin" : "cliente";
 
     const nuevoUsuarioData = {
       id: nuevaId,
@@ -53,17 +59,25 @@ export async function registerService(userData) {
       actualizadoEn: Date.now,
       creadoEn: Date.now,
     };
-
+    
+    // Llamar al servicio de usuario para crear el usuario en la base de datos
     const response = await postUsuarioService(nuevoUsuarioData);
 
-    return res
-      .status(response.statusCode)
-      .json({ msg: response.mensaje, nuevoUsuario: response.nuevoUsuario });
+    // Emitir una sesión o token JWT
+    const jwtToken = generateJwtToken(response.nuevoUsuario);
+
+    return {
+      statusCode: response.statusCode,
+      token: jwtToken,
+      mensaje: response.mensaje,
+      nuevoUsuario: response.nuevoUsuario,
+    };
   } catch (error) {
     console.error("Error en el registro de usuario:", error);
-    return res
-      .status(500)
-      .json({ error: "Error en el servidor al crear usuario" });
+    return {
+      mensaje: "Error en el servidor al crear usuario",
+      statusCode: 500,
+    };
   }
 }
 

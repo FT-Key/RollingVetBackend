@@ -6,13 +6,16 @@ import {
 export const postRegister = async (req, res) => {
   try {
     const usuarioData = req.body;
+    
     let result;
-    if (usuarioData.contrasenia) {
+    
+    if (usuarioData.userPass) {
       result = await registerService(usuarioData);
     } else {
       const token = usuarioData.token; // Extrae el token del cuerpo de la solicitud
       result = await googleRegisterService(token); // Pasa el token directamente
     }
+    
     return res
       .status(result.statusCode)
       .json({ msg: result.mensaje, nuevoUsuario: result.nuevoUsuario, token: result.token });
