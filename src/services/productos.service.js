@@ -63,6 +63,7 @@ export const putProductoService = async (idProducto, productoData) => {
   const productoActualizado = await ProductModel.findOneAndUpdate(
     { _id: idProducto },
     productoData,
+    { new: true }
   );
 
   return {
@@ -83,7 +84,6 @@ export const deleteProductoService = async (idProducto) => {
 };
 
 export const agregarImagenProductoService = async (idProducto, file) => {
-  console.log("SUBIENDO FOTO...")
   const producto = await ProductModel.findById(idProducto);
   const imagen = await cloudinary.uploader.upload(file.path);
   producto.imagenUrl = imagen.secure_url;
@@ -93,9 +93,9 @@ export const agregarImagenProductoService = async (idProducto, file) => {
 
   await producto.save();
 
-  console.log("FOTO SUBIDA")
   return {
     msg: 'Imagen cargada',
     statusCode: 200,
+    producto
   }
 };

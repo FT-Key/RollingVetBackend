@@ -70,7 +70,7 @@ export const agregarFotoPerfilController = async (req, res) => {
   const result = await agregarFotoPerfilService(req.params.idUsuario, req.file);
 
   if (result.statusCode === 200) {
-    res.status(200).json({ msg: result.msg });
+    res.status(200).json({ msg: result.msg, usuario: result.usuario });
   } else {
     res.status(500).json({ msg: 'Error al cargar foto de perfil' });
   }

@@ -72,7 +72,7 @@ export const productos = [
     fechaDeIngreso: "2024-09-01",
     proveedor: "Juguetes Mascotas S.L.",
     codigoDeBarras: "0123456789104",
-    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1727726215/qrhmjwogmdbxtxz0llnv.png",
+    imagenUrl: "https://res.cloudinary.com/duic1bovf/image/upload/v1727931022/akg1garrhdloahsabdk7.webp",
     calificaciones: 0,
     resenias: [],
     garantia: "3 meses",
@@ -80,7 +80,8 @@ export const productos = [
     bloqueado: false,
     imagenesUrls: [
       "https://via.placeholder.com/150",
-      "https://res.cloudinary.com/duic1bovf/image/upload/v1727726215/qrhmjwogmdbxtxz0llnv.png"
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1727726215/qrhmjwogmdbxtxz0llnv.png",
+      "https://res.cloudinary.com/duic1bovf/image/upload/v1727931022/akg1garrhdloahsabdk7.webp"
     ]
   },
   {

@@ -76,7 +76,7 @@ export const agregarImagenProductoController = async (req, res) => {
   const result = await agregarImagenProductoService(req.params.idProducto, req.file);
 
   if (result.statusCode === 200) {
-    res.status(200).json({ msg: result.msg });
+    res.status(200).json({ msg: result.msg, producto: result.producto });
   } else {
     res.status(500).json({ msg: 'Error al cargar la imagen del producto' });
   }
