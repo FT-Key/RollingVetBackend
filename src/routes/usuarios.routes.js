@@ -18,10 +18,10 @@ router.get('/:idUsuario', authTokenAndRole(['admin']), getUsuario);
 router.post('/', postUsuario);
 
 /* PUT */
-router.put('/:idUsuario', putUsuario);
+router.put('/:idUsuario', authTokenAndRole(['admin', 'cliente']), putUsuario);
 
 /* DELETE */
-router.delete('/:idUsuario', deleteUsuario);
+router.delete('/:idUsuario', authTokenAndRole(['admin']), deleteUsuario);
 
 /* SUBIR FOTO DE PERFIL*/
 router.post('/agregarFotoPerfil/:idUsuario', upload.single('image'), agregarFotoPerfilController);
