@@ -51,7 +51,7 @@ const PreguntaSeguridadSchema = new Schema({
 
 const EnlacesRedesSocialesSchema = new Schema({
   twitter: { type: String },
-  instagram: { type: String },
+  linkedin: { type: String },
 });
 
 const NotificacionesSchema = new Schema({
