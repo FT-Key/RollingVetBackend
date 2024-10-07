@@ -7,52 +7,37 @@ export async function loginService(userData) {
   const { nombreDeUsuario, contraseniaDeUsuario, recordarme } = userData;
 
   try {
-
-    // Buscar el usuario en la base de datos por nombreDeUsuario
-    const usuarioEncontrado = await UserModel.findOne({ nombreUsuario: nombreDeUsuario }).select('+contrasenia'); // Selecciona la contraseña aunque esté marcada con select: false
+    const usuarioEncontrado = await UserModel.findOne({ nombreUsuario: nombreDeUsuario }).select('+contrasenia');
 
     if (!usuarioEncontrado) {
-      return res.status(404).json({ msg: "Usuario no encontrado" });
+      return { statusCode: 404, msg: "Usuario no encontrado" };
     }
 
-    // Verificar si el usuario está bloqueado
     if (usuarioEncontrado.bloqueado) {
-      return res.status(403).json({ msg: "El usuario está bloqueado" });
+      return { statusCode: 403, msg: "El usuario está bloqueado" };
     }
 
-    // Verificar que el tipo de registro sea "normal"
     if (usuarioEncontrado.tipoRegistro !== "normal") {
-      return res.status(400).json({ msg: "Error al iniciar sesión, tipo de registro inválido" });
+      return { statusCode: 400, msg: "Error al iniciar sesión, tipo de registro inválido" };
     }
 
-    // Verificar la contraseña
-    const contraseniaCoincide = await verifyPassword(
-      contraseniaDeUsuario,
-      usuarioEncontrado.contrasenia
-    );
+    const contraseniaCoincide = await verifyPassword(contraseniaDeUsuario, usuarioEncontrado.contrasenia);
 
     if (!contraseniaCoincide) {
-      return res.status(400).json({ msg: "Contraseña incorrecta" });
+      return { statusCode: 400, msg: "Contraseña incorrecta" };
     }
 
-    // Actualizar el estado de estaActivo a true usando putUsuarioService
     const usuarioData = {
       estaActivo: true,
-      ultimoIngreso: new Date(), // También actualiza la fecha de último ingreso
+      ultimoIngreso: new Date(),
     };
 
-    const actualizacion = await putUsuarioService(
-      usuarioEncontrado._id,
-      usuarioData
-    );
+    const actualizacion = await putUsuarioService(usuarioEncontrado._id, usuarioData);
 
     if (!actualizacion.usuario) {
-      return res
-        .status(500)
-        .json({ msg: "Error al actualizar el usuario" });
+      return { statusCode: 500, msg: "Error al actualizar el usuario" };
     }
 
-    // Generar un token de autenticación
     const token = generateJwtToken(usuarioEncontrado);
 
     return {
@@ -61,6 +46,7 @@ export async function loginService(userData) {
       msg: "Inicio de sesión exitoso!",
     };
   } catch (error) {
+    console.error("Error en loginService:", error);
     return { statusCode: 500, msg: "Error en el servidor" };
   }
 }
@@ -91,8 +77,8 @@ export async function googleLoginService(token) {
       return { statusCode: 404, msg: "UsuarioEncontrado no encontrado" };
     }
 
-     // Verificar si el usuario está bloqueado
-     if (usuarioEncontrado.bloqueado) {
+    // Verificar si el usuario está bloqueado
+    if (usuarioEncontrado.bloqueado) {
       return { statusCode: 403, msg: "El usuario está bloqueado" };
     }
 
