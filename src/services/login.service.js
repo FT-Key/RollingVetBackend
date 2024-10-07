@@ -15,6 +15,16 @@ export async function loginService(userData) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }
 
+    // Verificar si el usuario está bloqueado
+    if (usuarioEncontrado.bloqueado) {
+      return res.status(403).json({ msg: "El usuario está bloqueado" });
+    }
+
+    // Verificar que el tipo de registro sea "normal"
+    if (usuarioEncontrado.tipoRegistro !== "normal") {
+      return res.status(400).json({ msg: "Error al iniciar sesión, tipo de registro inválido" });
+    }
+
     // Verificar la contraseña
     const contraseniaCoincide = await verifyPassword(
       contraseniaDeUsuario,
@@ -79,6 +89,16 @@ export async function googleLoginService(token) {
 
     if (!usuarioEncontrado) {
       return { statusCode: 404, msg: "UsuarioEncontrado no encontrado" };
+    }
+
+     // Verificar si el usuario está bloqueado
+     if (usuarioEncontrado.bloqueado) {
+      return { statusCode: 403, msg: "El usuario está bloqueado" };
+    }
+
+    // Verificar que el tipo de registro sea "google"
+    if (usuarioEncontrado.tipoRegistro !== "google") {
+      return { statusCode: 400, msg: "Error al iniciar sesión, tipo de registro inválido" };
     }
 
     // Verificar la contraseña
