@@ -11,7 +11,7 @@ import {
 import upload from '../middlewares/multer.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
 import { paginationMiddleware } from '../utils/pagination.js';
-import AnimalModel from '../models/animal.schema.js'; // Modelo de animales
+import AnimalModel from '../models/animal.schema.js';
 import dynamicFilterMiddleware from '../middlewares/filter.js';
 
 const router = Router();

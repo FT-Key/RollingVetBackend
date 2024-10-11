@@ -13,7 +13,7 @@ export const productos = [
     calificaciones: 0,
     resenias: [],
     garantia: "6 meses",
-    descuento: 10, // en porcentaje
+    descuento: 10,
     bloqueado: false,
     imagenesUrls: [
       "https://via.placeholder.com/150",

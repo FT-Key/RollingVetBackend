@@ -1,10 +1,9 @@
 import mongoose from 'mongoose';
 import { TIPOS_ATENCION, ESTADOS_TURNO, MODALIDADES } from '../mocks/turnos.mock.js';
 
-// Definir el subdocumento Turno
 const turnoSchema = new mongoose.Schema({
   hora: {
-    type: String,  // Ejemplo: '09:00'
+    type: String,
     required: true
   },
   tipoAtencion: {
@@ -26,26 +25,25 @@ const turnoSchema = new mongoose.Schema({
   usuario: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Usuario',
-    required: false  // Será null hasta que el cliente lo reserve
+    required: false 
   },
   descripcion: {
-    type: String, // Campo opcional para proporcionar detalles adicionales si es necesario
+    type: String,
   }
 });
 
-// Definir el esquema FechaTurno
 const fechaTurnoSchema = new mongoose.Schema({
   fecha: {
     type: Date,
-    unique: true,  // Para asegurar que no se repita la fecha
+    unique: true,
     required: true
   },
   creador: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Usuario',
-    required: true  // El usuario que creó la fecha y los turnos
+    required: true
   },
-  turnos: [turnoSchema],  // Array de turnos embebidos
+  turnos: [turnoSchema],
   creadoEn: {
     type: Date,
     default: Date.now
@@ -55,7 +53,6 @@ const fechaTurnoSchema = new mongoose.Schema({
   }
 });
 
-// Crear el modelo FechaTurno
 const FechaTurnoModel = mongoose.model('FechaTurno', fechaTurnoSchema);
 
 export default FechaTurnoModel;

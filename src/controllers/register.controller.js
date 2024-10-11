@@ -12,8 +12,8 @@ export const postRegister = async (req, res) => {
     if (usuarioData.userPass) {
       result = await registerService(usuarioData);
     } else {
-      const token = usuarioData.token; // Extrae el token del cuerpo de la solicitud
-      result = await googleRegisterService(token); // Pasa el token directamente
+      const token = usuarioData.token;
+      result = await googleRegisterService(token);
     }
     
     return res

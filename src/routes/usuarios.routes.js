@@ -3,7 +3,7 @@ import { getUsuario, getUsuarios, postUsuario, putUsuario, deleteUsuario, agrega
 import upload from '../middlewares/multer.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
 import { paginationMiddleware } from '../utils/pagination.js';
-import UserModel from '../models/usuario.schema.js'; // Modelo de usuarios
+import UserModel from '../models/usuario.schema.js';
 import dynamicFilterMiddleware from '../middlewares/filter.js';
 
 const router = Router();

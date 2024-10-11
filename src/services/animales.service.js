@@ -5,10 +5,9 @@ import mongoose from 'mongoose';
 
 export const getAnimalesService = async (pagination = null, filters = {}) => {
 
-  // Verificar si el filtro 'duenio' existe y es un ObjectId válido
   if (filters && filters.duenio) {
     if (mongoose.Types.ObjectId.isValid(filters.duenio)) {
-      // Convertir a ObjectId
+
       const duenioObjectId = new mongoose.Types.ObjectId(filters.duenio);
       filters.duenio = duenioObjectId;
     } else {
@@ -23,19 +22,19 @@ export const getAnimalesService = async (pagination = null, filters = {}) => {
   }
 
   let animales;
-  let totalAnimales = await AnimalModel.countDocuments(filters); // Contar solo los documentos que coincidan con los filtros
+  let totalAnimales = await AnimalModel.countDocuments(filters);
 
   if (pagination) {
     const { skip, limit } = pagination;
     animales = await AnimalModel.find(filters)
       .skip(skip)
       .limit(limit)
-      .populate("duenio", "nombre email")  // Populate del duenio
-      .populate("plan", "nombre descripcion precio");  // Populate del plan
+      .populate("duenio", "nombre email")
+      .populate("plan", "nombre descripcion precio");
   } else {
     animales = await AnimalModel.find(filters)
       .populate("duenio", "nombre email")
-      .populate("plan", "nombre descripcion precio");  // Populate del plan
+      .populate("plan", "nombre descripcion precio");
   }
 
   return {
@@ -45,11 +44,10 @@ export const getAnimalesService = async (pagination = null, filters = {}) => {
   };
 };
 
-// Obtener un animal por su ID
 export const getAnimalService = async (idAnimal) => {
   const animal = await AnimalModel.findById(idAnimal)
     .populate("duenio", "nombre email")
-    .populate("plan", "nombre descripcion precio");  // Populate del plan
+    .populate("plan", "nombre descripcion precio");
 
   if (animal) {
     return {
@@ -64,7 +62,6 @@ export const getAnimalService = async (idAnimal) => {
   }
 };
 
-// Crear un nuevo animal
 export const postAnimalService = async (nuevoAnimalData) => {
   const nuevoAnimal = new AnimalModel(nuevoAnimalData);
 
@@ -86,7 +83,6 @@ export const postAnimalService = async (nuevoAnimalData) => {
   }
 };
 
-// Actualizar un animal existente
 export const putAnimalService = async (idAnimal, animalData) => {
   const animal = await AnimalModel.findById(idAnimal);
 
@@ -97,7 +93,6 @@ export const putAnimalService = async (idAnimal, animalData) => {
     };
   }
 
-  // Actualizar la información del animal
   Object.assign(animal, animalData);
   animal.actualizadoEn = new Date();
 
@@ -110,9 +105,7 @@ export const putAnimalService = async (idAnimal, animalData) => {
   };
 };
 
-// Eliminar un animal
 export const deleteAnimalService = async (idAnimal, user) => {
-  // Buscar el animal
   const animal = await AnimalModel.findById(idAnimal);
 
   if (!animal) {
@@ -122,15 +115,11 @@ export const deleteAnimalService = async (idAnimal, user) => {
     };
   }
 
-  // Verificar si el usuario es admin o si es el dueño del animal
   if (user.rol === 'admin' || animal.duenio.toString() === user._id.toString()) {
-    // Eliminar el animal
     await AnimalModel.findByIdAndDelete(idAnimal);
 
-    // Buscar a los usuarios que tienen este animal en su array de mascotas
     const usuarios = await UserModel.find({ mascotas: idAnimal });
 
-    // Actualizar cada usuario para eliminar el animal de su lista de mascotas
     for (const usuario of usuarios) {
       usuario.mascotas = usuario.mascotas.filter(mascotaId => mascotaId.toString() !== idAnimal);
       await usuario.save();
@@ -142,14 +131,12 @@ export const deleteAnimalService = async (idAnimal, user) => {
     };
   }
 
-  // Si no es admin y no es dueño, retorna un mensaje de error
   return {
     mensaje: "No tienes permiso para eliminar este animal",
     statusCode: 403,
   };
 };
 
-// Agregar foto del animal
 export const agregarFotoAnimalService = async (idAnimal, file) => {
   const animal = await AnimalModel.findById(idAnimal);
   if (!animal) {
@@ -159,7 +146,6 @@ export const agregarFotoAnimalService = async (idAnimal, file) => {
     };
   }
 
-  // Subir la imagen a Cloudinary
   const imagen = await cloudinary.uploader.upload(file.path);
   animal.fotoUrl = imagen.secure_url;
 
@@ -176,13 +162,11 @@ export const createAnimalService = async (animalData, userId) => {
     const newAnimal = new AnimalModel(animalData);
     await newAnimal.save();
 
-    // Asignar la mascota al usuario
     const usuario = await UserModel.findById(userId);
     if (!usuario) {
       throw new Error('Usuario no encontrado');
     }
 
-    // Agregar el ID de la nueva mascota al array de mascotas del usuario
     usuario.mascotas.push(newAnimal._id);
     await usuario.save();
 

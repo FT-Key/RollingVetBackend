@@ -1,4 +1,3 @@
-// Definir los tipos de atención
 export const TIPOS_ATENCION = [
   'Consulta veterinaria',
   'Vacunación',
@@ -19,7 +18,6 @@ export const TIPOS_ATENCION = [
   'Soporte técnico de productos',
 ];
 
-// Definir los posibles estados para el turno
 export const ESTADOS_TURNO = [
   'libre',
   'pendiente',
@@ -30,7 +28,6 @@ export const ESTADOS_TURNO = [
   'caducado'
 ];
 
-// Definir los tipos de modalidad
 export const MODALIDADES = ['presencial', 'online'];
 
 export const HORAS_TURNOS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30'];

@@ -9,15 +9,15 @@ import {
 
 export const getProductosController = async (req, res) => {
   try {
-    const filters = req.filters || {}; // Obtener los filtros dinámicos
-    const result = await getProductosService(req.pagination, filters); // Pasar los filtros al servicio
+    const filters = req.filters || {};
+    const result = await getProductosService(req.pagination, filters);
 
     if (result.statusCode === 200) {
       return res.status(200).json({
         productos: result.productos,
         totalProductos: result.totalProductos,
-        page: req.pagination ? req.pagination.page : null,  // Retornar page solo si existe paginación
-        limit: req.pagination ? req.pagination.limit : null  // Retornar limit solo si existe paginación
+        page: req.pagination ? req.pagination.page : null,
+        limit: req.pagination ? req.pagination.limit : null
       });
     } else {
       return res.status(500).json({ msg: "Error al traer los productos." });

@@ -12,7 +12,7 @@ import {
 export const addProductToCartController = async (req, res) => {
   try {
     const idUsuario = req.user._id;
-    const { idProducto } = req.params; // Recibe el ID del producto de los parámetros de la URL
+    const { idProducto } = req.params;
     const cart = await addProductToCartService(idUsuario, idProducto);
     res.status(200).json(cart);
   } catch (error) {
@@ -23,7 +23,7 @@ export const addProductToCartController = async (req, res) => {
 export const removeProductFromCartController = async (req, res) => {
   try {
     const idUsuario = req.user._id;
-    const { idProducto } = req.params; // Recibe el ID del producto de los parámetros de la URL
+    const { idProducto } = req.params;
     const cart = await removeProductFromCartService(idUsuario, idProducto);
     res.status(200).json(cart);
   } catch (error) {
@@ -43,7 +43,7 @@ export const getCartController = async (req, res) => {
 
 export const buyProductsMPController = async (req, res) => {
   try {
-    const { productos, returnUrl } = req.body; // Extraer returnUrl del cuerpo de la solicitud
+    const { productos, returnUrl } = req.body;
 
     if (!returnUrl) {
       throw new Error('Falta la URL de retorno');
@@ -60,7 +60,7 @@ export const buyProductsMPController = async (req, res) => {
 export const addProductToFavController = async (req, res) => {
   try {
     const idUsuario = req.user._id;
-    const { idProducto } = req.params; // Recibe el ID del producto de los parámetros de la URL
+    const { idProducto } = req.params;
     const fav = await addProductToFavService(idUsuario, idProducto);
     res.status(200).json(fav);
   } catch (error) {
@@ -71,7 +71,7 @@ export const addProductToFavController = async (req, res) => {
 export const removeProductFromFavController = async (req, res) => {
   try {
     const idUsuario = req.user._id;
-    const { idProducto } = req.params; // Recibe el ID del producto de los parámetros de la URL
+    const { idProducto } = req.params;
     const fav = await removeProductFromFavService(idUsuario, idProducto);
     res.status(200).json(fav);
   } catch (error) {

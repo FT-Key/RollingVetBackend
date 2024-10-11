@@ -60,8 +60,8 @@ const NotificacionesSchema = new Schema({
 });
 
 const PreferenciasSchema = new Schema({
-  idioma: { type: String, enum: IDIOMAS, default: IDIOMAS[0] }, // Por defecto Español
-  tema: { type: String, enum: TEMAS, default: TEMAS[0] }, // Por defecto Claro
+  idioma: { type: String, enum: IDIOMAS, default: IDIOMAS[0] },
+  tema: { type: String, enum: TEMAS, default: TEMAS[0] },
 });
 
 const UsuarioSchema = new Schema({
@@ -97,9 +97,9 @@ const UsuarioSchema = new Schema({
   notificaciones: { type: NotificacionesSchema, default: {} },
   autenticacionDosFactores: { type: Boolean },
   region: { type: String, enum: REGIONES },
-  idCarrito: { type: mongoose.Schema.Types.ObjectId, ref: "cart" }, // Referencia al carrito
-  idFavoritos: { type: mongoose.Schema.Types.ObjectId, ref: "fav" }, // Referencia a favoritos
-  mascotas: [{ type: mongoose.Schema.Types.ObjectId, ref: "Animal" }], // Relación con múltiples animales
+  idCarrito: { type: mongoose.Schema.Types.ObjectId, ref: "cart" },
+  idFavoritos: { type: mongoose.Schema.Types.ObjectId, ref: "fav" },
+  mascotas: [{ type: mongoose.Schema.Types.ObjectId, ref: "Animal" }],
 });
 
 const Usuario = model("Usuario", UsuarioSchema);

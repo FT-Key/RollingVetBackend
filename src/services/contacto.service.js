@@ -1,8 +1,7 @@
 import { enviarCorreo } from '../utils/mailer.js';
-import { MercadoPagoConfig, Preference } from 'mercadopago'; // Asegúrate de tener estas importaciones
+import { MercadoPagoConfig, Preference } from 'mercadopago';
 
 export const postContactoService = async ({ nombre, email, telefono, asunto, mensaje }) => {
-  // Crear el contenido del mensaje
   const contenidoMensaje = `
     Nombre: ${nombre}
     Email: ${email}
@@ -10,20 +9,15 @@ export const postContactoService = async ({ nombre, email, telefono, asunto, men
     Mensaje: ${mensaje}
   `;
 
-  // Correo de destino (cambia esto por el correo que desees)
-  const correoDestino = 'CuentaAmigoNumero1@gmail.com'; // Cambia por el correo que quieras usar
+  const correoDestino = 'CuentaAmigoNumero1@gmail.com';
 
-  // Llamar a la función enviarCorreo para enviar el correo al destinatario específico
   await enviarCorreo(correoDestino, asunto, contenidoMensaje);
 };
 
 export const postDonationService = async (amount, paymentMethod, returnUrl) => {
-  // Verificamos el método de pago
   if (paymentMethod === 'mercadoPago') {
-    // Llama a la función de Mercado Pago para manejar la donación
     return await MPDonationHandler(amount, returnUrl);
   } else {
-    // Aquí podrías manejar otros métodos de pago en el futuro
     throw new Error(`Método de pago ${paymentMethod} no soportado`);
   }
 };
@@ -38,7 +32,7 @@ const MPDonationHandler = async (amount, returnUrl) => {
       title: 'Donación a fundación RollingVet',
       quantity: 1,
       unit_price: amount,
-      currency_id: 'ARS', // Cambia según la moneda que uses
+      currency_id: 'ARS',
     }
   ];
 
@@ -57,7 +51,7 @@ const MPDonationHandler = async (amount, returnUrl) => {
   });
 
   return {
-    url: result.id, // URL para redirigir al usuario
+    url: result.id,
     statusCode: 200,
   };
 };

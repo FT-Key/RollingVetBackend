@@ -10,8 +10,8 @@ import {
 
 export const getAnimalsController = async (req, res) => {
   try {
-    const filters = req.filters || {}; // Obtener los filtros dinámicos
-    const result = await getAnimalesService(req.pagination, filters); // Pasar los filtros al servicio
+    const filters = req.filters || {};
+    const result = await getAnimalesService(req.pagination, filters);
 
     return res.status(result.statusCode).json({
       animales: result.animales,
@@ -76,23 +76,21 @@ export const agregarFotoAnimalController = async (req, res) => {
 
 export const createAnimalController = async (req, res) => {
   try {
-    // Verifica si hay un campo fotoUrl y si está vacío, lo elimina
     if (req.body.fotoUrl === '') {
       delete req.body.fotoUrl;
     }
 
-    // Convierte las vacunas en un array de objetos con nombre y fecha
     const vacunas = req.body.vacunas
       ? req.body.vacunas.map((vacuna) => ({ nombre: vacuna, fecha: Date.now() }))
       : [];
 
     const animalData = {
       ...req.body,
-      duenio: req.user._id, // Establece el ID del usuario actual como dueño
-      estado: "Mascota", // Establece el estado como "Mascota"
+      duenio: req.user._id,
+      estado: "Mascota",
       creadoPor: req.user._id,
-      actualizadoEn: Date.now(), // Invoca la función para obtener la fecha actual
-      vacunas, // Asigna el array de vacunas formateado
+      actualizadoEn: Date.now(),
+      vacunas,
     };
 
     const newAnimal = await createAnimalService(animalData, req.user._id);

@@ -68,18 +68,16 @@ export const comprarPlanService = async (planSeleccionado, mascotaSeleccionada, 
     accessToken: process.env.MP_ACCESS_TOKEN,
   });
 
-  // Obtener los detalles del plan seleccionado desde la base de datos
   const plan = await PlanModel.findById(planSeleccionado.idPlan);
 
   if (!plan) {
     throw new Error(`Plan con id ${planSeleccionado.idPlan} no encontrado`);
   }
 
-  // Crear el item para Mercado Pago
   const items = [
     {
       title: `Plan ${plan.nombre} para ${mascotaSeleccionada.nombre}`,
-      quantity: 1, // Solo se compra un plan
+      quantity: 1,
       unit_price: plan.precio,
       currency_id: 'ARS',
     }
@@ -87,7 +85,6 @@ export const comprarPlanService = async (planSeleccionado, mascotaSeleccionada, 
 
   const preference = new Preference(cliente);
 
-  // Crear la preferencia para Mercado Pago
   const result = await preference.create({
     body: {
       items,

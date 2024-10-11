@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 
-// Configuración del transportador
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -9,13 +8,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Función para enviar el correo
 export const enviarCorreo = async (destinatario, asunto, mensaje) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER, // Correo del remitente
-    to: destinatario,              // Correo del destinatario
-    subject: asunto,               // Asunto del correo
-    text: mensaje,                 // Cuerpo del correo en texto
+    from: process.env.EMAIL_USER,
+    to: destinatario,
+    subject: asunto,
+    text: mensaje,
   };
 
   try {

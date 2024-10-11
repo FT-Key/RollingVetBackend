@@ -2,7 +2,7 @@ import express from 'express';
 import { crearTurnosSemanalesController, obtenerTurnosController, solicitarTurnoController, listaTurnosController, cancelarTurnoController, modificarTurnoController, obtenerTurnoController } from '../controllers/turnos.controller.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
 import { paginationMiddleware } from '../utils/pagination.js';
-import FechaTurnoModel from '../models/fechaTurnos.schema.js'; // Modelo de turnos
+import FechaTurnoModel from '../models/fechaTurnos.schema.js';
 import dynamicFilterMiddleware from '../middlewares/filter.js';
 
 const router = express.Router();
