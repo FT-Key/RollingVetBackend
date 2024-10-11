@@ -7,8 +7,7 @@ import {
 import { authTokenAndRole } from '../middlewares/auth.js';
 import { paginationMiddleware } from '../utils/pagination.js';
 import dynamicFilterMiddleware from '../middlewares/filter.js';
-import ComentarioModel from '../models/comentarios.schema.js'; // Modelo de Comentarios
-
+import ComentarioModel from '../models/comentarios.schema.js';
 const router = Router();
 
 /* GET */

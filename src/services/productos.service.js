@@ -3,7 +3,7 @@ import ProductModel from "../models/producto.schema.js";
 
 export const getProductosService = async (pagination = null, filters = {}) => {
   let productos;
-  let totalProductos = await ProductModel.countDocuments(filters); // Contar solo los productos que coincidan con los filtros
+  let totalProductos = await ProductModel.countDocuments(filters);
 
   if (pagination) {
     const { skip, limit } = pagination;
@@ -11,12 +11,12 @@ export const getProductosService = async (pagination = null, filters = {}) => {
       .skip(skip)
       .limit(limit);
   } else {
-    productos = await ProductModel.find(filters); // Si no hay paginación, aplicar solo los filtros
+    productos = await ProductModel.find(filters);
   }
 
   return {
     productos,
-    totalProductos,  // Retornar el total de productos
+    totalProductos,
     statusCode: 200,
   };
 };

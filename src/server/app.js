@@ -1,7 +1,6 @@
 import "../DB/config.js";
 import express from "express";
 import cors from "cors";
-//
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -9,7 +8,6 @@ import { fileURLToPath } from "url";
 // Obtén el directorio del archivo actual
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-//
 import productosRouter from "../routes/productos.routes.js";
 import usuariosRouter from "../routes/usuarios.routes.js";
 import loginRouter from "../routes/login.routes.js";
@@ -30,19 +28,17 @@ class Server {
   }
 
   middlewares() {
-    // MiddleWare
     const corsOptions = {
       origin: [
         "http://localhost:5173",
         "https://rollingvet104i.netlify.app",
-      ], // Permitir solicitudes desde estos orígenes
-      methods: "GET,POST,PUT,DELETE", // Métodos permitidos
-      allowedHeaders: "Content-Type,Authorization", // Encabezados permitidos
+      ],
+      methods: "GET,POST,PUT,DELETE",
+      allowedHeaders: "Content-Type,Authorization",
     };
 
     this.app.use(cors(corsOptions));
 
-    // Agregar encabezados de COOP y COEP
     this.app.use((req, res, next) => {
       res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
       res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
@@ -53,7 +49,6 @@ class Server {
   }
 
   rutas() {
-    // Usar las rutas definidas en productos.js
     this.app.use("/productos", productosRouter);
     this.app.use("/usuarios", usuariosRouter);
     this.app.use("/login", loginRouter);

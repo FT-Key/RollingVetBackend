@@ -67,7 +67,7 @@ export const comprarPlanController = async (req, res) => {
 
     const response = await comprarPlanService(planSeleccionado, mascotaSeleccionada, returnUrl);
 
-    res.status(200).json(response);  // Devolvemos la URL generada por Mercado Pago
+    res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

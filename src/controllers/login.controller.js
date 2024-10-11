@@ -4,7 +4,6 @@ export const loginController = async (req, res) => {
   try {
     const usuarioData = req.body;
 
-    // Transforma el objeto recibido al formato requerido
     const transformedData = {
       nombreDeUsuario: usuarioData.userName,
       contraseniaDeUsuario: usuarioData.userPass,
@@ -16,8 +15,8 @@ export const loginController = async (req, res) => {
     if (usuarioData.userPass) {
       result = await loginService(transformedData);
     } else {
-      const token = usuarioData.token; // Extrae el token del cuerpo de la solicitud
-      result = await googleLoginService(token); // Pasa el token directamente
+      const token = usuarioData.token;
+      result = await googleLoginService(token);
     }
 
     return res

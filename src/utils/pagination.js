@@ -9,7 +9,7 @@ export const paginationMiddleware = (req, res, next) => {
       skip: parseInt(skip)
     };
   } else {
-    req.pagination = null;  // Si no se envían page o limit, no se aplicará paginación
+    req.pagination = null;
   }
 
   next();

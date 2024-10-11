@@ -10,7 +10,7 @@ const FavSchema = new mongoose.Schema({
   productos: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Producto', // Referencia a la colección de productos
+      ref: 'Producto',
     }
   ],
 });

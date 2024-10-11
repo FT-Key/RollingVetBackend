@@ -11,7 +11,7 @@ export const addProductToCartService = async (idUsuario, idProducto) => {
   if (!cart) {
     cart = new CartModel({ idUsuario, productos: [idProducto] });
   } else {
-    const productoExiste = cart.productos.some(prod => prod.toString() === idProducto.toString()); // Verifica si el producto ya existe en el carrito
+    const productoExiste = cart.productos.some(prod => prod.toString() === idProducto.toString());
 
     if (!productoExiste) {
       cart.productos.push(idProducto);
@@ -48,7 +48,6 @@ export const buyProductsMPService = async (productos, returnUrl) => {
     accessToken: process.env.MP_ACCESS_TOKEN,
   });
 
-  // Obtener los detalles de los productos desde la base de datos
   const items = await Promise.all(
     productos.map(async (prod) => {
       const producto = await ProductModel.findById(prod.idProducto);
@@ -94,7 +93,7 @@ export const addProductToFavService = async (idUsuario, idProducto) => {
   if (!fav) {
     fav = new FavModel({ idUsuario, productos: [idProducto] });
   } else {
-    const productoExiste = fav.productos.some(prod => prod.toString() === idProducto.toString()); // Verifica si el producto ya existe en favoritos
+    const productoExiste = fav.productos.some(prod => prod.toString() === idProducto.toString());
 
     if (!productoExiste) {
       fav.productos.push(idProducto);

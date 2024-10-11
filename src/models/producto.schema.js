@@ -13,7 +13,7 @@ const productoSchema = new Schema({
   imagenUrl: { type: String, required: true },
   imagenesUrls: { type: [String], default: [] },
   calificaciones: { type: Number, required: true, min: 0, max: 5 },
-  resenias: [{ type: Schema.Types.ObjectId, ref: 'Review' }], // Referencia a Review
+  resenias: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
   garantia: { type: String, required: true },
   descuento: { type: Number, required: true, min: 0, max: 100 },
   bloqueado: { type: Boolean, required: true }

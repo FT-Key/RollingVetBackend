@@ -6,7 +6,7 @@ import cloudinary from "../helpers/cloudinary.config.js";
 
 export const getUsuariosService = async (pagination = null, filters = {}) => {
   let usuarios;
-  let totalUsuarios = await UserModel.countDocuments(filters); // Contar solo los usuarios que coincidan con los filtros
+  let totalUsuarios = await UserModel.countDocuments(filters);
 
   if (pagination) {
     const { skip, limit } = pagination;
@@ -15,19 +15,19 @@ export const getUsuariosService = async (pagination = null, filters = {}) => {
       .limit(limit)
       .populate({
         path: 'mascotas',
-        model: 'Animal', // Especificar el modelo de referencia
+        model: 'Animal',
       });
   } else {
     usuarios = await UserModel.find(filters)
       .populate({
         path: 'mascotas',
         model: 'Animal',
-      }); // Si no hay paginación, aplicar solo los filtros con populate
+      });
   }
 
   return {
     usuarios,
-    totalUsuarios,  // Enviar el total de usuarios
+    totalUsuarios,
     statusCode: 200,
   };
 };
@@ -37,7 +37,7 @@ export const getUsuarioService = async (idUsuario) => {
     const usuario = await UserModel.findOne({ _id: idUsuario })
       .populate({
         path: 'mascotas',
-        model: 'Animal', // Especificas el modelo de referencia
+        model: 'Animal',
       });
 
     if (usuario) {
@@ -61,24 +61,19 @@ export const getUsuarioService = async (idUsuario) => {
 };
 
 export const postUsuarioService = async (nuevoUsuarioData) => {
-  // Asignar fechas de creación y actualización correctamente
   nuevoUsuarioData.creadoEn = Date.now();
   nuevoUsuarioData.actualizadoEn = Date.now();
 
-  // Crear el usuario
   const nuevoUsuario = new UserModel(nuevoUsuarioData);
 
-  // Crear el carrito y favoritos asociados al nuevo usuario
   const carrito = new CartModel({ idUsuario: nuevoUsuario._id });
   const favoritos = new FavModel({ idUsuario: nuevoUsuario._id });
   await carrito.save();
   await favoritos.save();
 
-  // Asignar los IDs de carrito y favoritos al usuario
   nuevoUsuario.idCarrito = carrito._id;
   nuevoUsuario.idFavoritos = favoritos._id;
 
-  // Guardar el usuario en la base de datos
   await nuevoUsuario.save();
 
   return {
@@ -98,19 +93,14 @@ export const putUsuarioService = async (idUsuario, usuarioData) => {
     }
   }
 
-  // Solo procesar mascotas si el campo `mascotas` está presente (no undefined o null)
   if (usuarioData.mascotas !== undefined && usuarioData.mascotas !== null) {
 
-    // Mascotas que el usuario tenía antes de la actualización
     const mascotasDB = usuario.mascotas.map(m => m._id.toString());
 
-    // Mascotas que vienen del frontend (nuevas y existentes)
     const mascotasActualizadas = usuarioData.mascotas;
 
-    // Identificar las mascotas eliminadas
     const mascotasEliminadas = mascotasDB.filter(idMascota => !mascotasActualizadas.some(m => m._id && m._id.toString() === idMascota));
 
-    // Eliminar las mascotas eliminadas
     if (mascotasEliminadas.length > 0) {
       for (const idMascota of mascotasEliminadas) {
         usuario.mascotas = usuario.mascotas.filter(mascota => mascota._id.toString() !== idMascota);
@@ -118,9 +108,8 @@ export const putUsuarioService = async (idUsuario, usuarioData) => {
       }
     }
 
-    // Procesar las nuevas mascotas
     for (let mascotaFrontend of mascotasActualizadas) {
-      if (!mascotaFrontend._id) { // Si no tiene _id, es nueva
+      if (!mascotaFrontend._id) {
         const nuevaMascota = new AnimalModel({
           duenio: usuario._id,
           tipo: mascotaFrontend.tipo,
@@ -132,13 +121,10 @@ export const putUsuarioService = async (idUsuario, usuarioData) => {
         });
         const mascotaGuardada = await nuevaMascota.save();
         usuario.mascotas.push(mascotaGuardada._id.toString());
-      } else {
-        // Aquí podrías manejar la actualización de una mascota existente si es necesario
       }
     }
   }
 
-  // Actualizar las propiedades del usuario (excepto mascotas)
   const { mascotas, ...restoDeUsuarioData } = usuarioData;
   Object.assign(usuario, restoDeUsuarioData);
 
@@ -150,19 +136,6 @@ export const putUsuarioService = async (idUsuario, usuarioData) => {
     statusCode: 200,
   };
 };
-
-/* export const putUsuarioService = async (idUsuario, usuarioData) => {
-  const usuarioActualizado = await UserModel.findOneAndUpdate(
-    { _id: idUsuario },
-    usuarioData
-  );
-
-  return {
-    mensaje: "Usuario actualizado",
-    usuario: usuarioActualizado,
-    statusCode: 200,
-  };
-}; */
 
 export const deleteUsuarioService = async (idUsuario) => {
   await UserModel.findByIdAndDelete({ _id: idUsuario });

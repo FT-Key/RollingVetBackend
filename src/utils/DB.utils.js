@@ -1,17 +1,17 @@
 import { postProductoService } from "../services/productos.service.js";
 import { postUsuarioService } from "../services/usuarios.service.js";
-import { postAnimalService } from "../services/animales.service.js"; // Asumiendo que tienes un servicio para animales
-import { postComentarioService } from "../services/comentarios.service.js"; // Asumiendo que tienes un servicio para comentarios
+import { postAnimalService } from "../services/animales.service.js";
+import { postComentarioService } from "../services/comentarios.service.js";
 import UserModel from "../models/usuario.schema.js";
 import ProductModel from "../models/producto.schema.js";
-import AnimalModel from "../models/animal.schema.js"; // Asegúrate de tener el modelo para animales
-import PlanModel from "../models/plan.schema.js"; // Asegúrate de tener el modelo para planes
-import ComentarioModel from "../models/comentarios.schema.js"; // Asegúrate de tener el modelo para comentarios
+import AnimalModel from "../models/animal.schema.js";
+import PlanModel from "../models/plan.schema.js";
+import ComentarioModel from "../models/comentarios.schema.js";
 import { usuarios } from "../mocks/usuarios.mock.js";
 import { productos } from "../mocks/productos.mock.js";
-import { animales } from "../mocks/animales.mock.js"; // Importar el array de animales
-import { planes } from "../mocks/planes.mock.js"; // Importar el array de planes
-import { comentarios } from "../mocks/comentarios.mock.js"; // Importar el array de planes
+import { animales } from "../mocks/animales.mock.js";
+import { planes } from "../mocks/planes.mock.js";
+import { comentarios } from "../mocks/comentarios.mock.js";
 import { hashPassword } from "./register.utils.js";
 
 export function poblarDB() {
@@ -40,16 +40,13 @@ export function poblarDB() {
 
       if (usuariosExistentes.length === 0) {
         for (const usuario of usuarios) {
-          // Encriptar la contraseña antes de guardar el usuario
           const hashedPassword = await hashPassword(usuario.contrasenia);
 
-          // Crear un nuevo objeto de usuario con la contraseña encriptada
           const usuarioContraseniaHasheada = {
             ...usuario,
             contrasenia: hashedPassword
           };
 
-          // Llamar al servicio para crear el usuario con la contraseña hasheada
           const resultado = await postUsuarioService(usuarioContraseniaHasheada);
           console.log(resultado.mensaje);
         }
@@ -64,7 +61,6 @@ export function poblarDB() {
 
   const inicializarAnimales = async () => {
     try {
-      // Inicializar planes
       const planesExistentes = await PlanModel.find();
 
       if (planesExistentes.length === 0) {
@@ -77,18 +73,15 @@ export function poblarDB() {
         console.log("La base de datos ya contiene planes.");
       }
 
-      // Obtener planes con sus _id
       const planesCreados = await PlanModel.find();
       const planBasico = planesCreados.find(p => p.nombre === "Básico")._id;
       const planCompleto = planesCreados.find(p => p.nombre === "Completo")._id;
       const planPremium = planesCreados.find(p => p.nombre === "Premium")._id;
 
-      // Inicializar animales
       const animalesExistentes = await AnimalModel.find();
 
       if (animalesExistentes.length === 0) {
         for (const animal of animales) {
-          // Asignar el plan correspondiente según el nombre del plan en el array
           switch (animal.plan) {
             case "Básico":
               animal.plan = planBasico;
@@ -100,7 +93,7 @@ export function poblarDB() {
               animal.plan = planPremium;
               break;
             default:
-              animal.plan = null;  // O un plan por defecto
+              animal.plan = null;
           }
 
           const resultado = await postAnimalService(animal);
@@ -136,5 +129,5 @@ export function poblarDB() {
   inicializarUsuarios();
   inicializarProductos();
   inicializarAnimales();
-  inicializarComentarios(); // Llama a la función para inicializar los comentarios
+  inicializarComentarios();
 }

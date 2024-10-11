@@ -22,7 +22,6 @@ export async function registerService(userData) {
       };
     }
 
-    // Verificar si ya existe un usuario con el nombre de usuario proporcionado
     const nombreUsuarioEncontrado = await UserModel.findOne({
       nombreUsuario: nombreDeUsuario,
     });
@@ -34,7 +33,6 @@ export async function registerService(userData) {
       };
     }
 
-    // Verificar si ya existe un usuario con el email proporcionado
     const emailUsuarioEncontrado = await UserModel.findOne({
       email: emailDeUsuario,
     });
@@ -60,10 +58,8 @@ export async function registerService(userData) {
       creadoEn: Date.now,
     };
 
-    // Llamar al servicio de usuario para crear el usuario en la base de datos
     const response = await postUsuarioService(nuevoUsuarioData);
 
-    // Emitir una sesión o token JWT
     const jwtToken = generateJwtToken(response.nuevoUsuario);
 
     return {
@@ -89,7 +85,7 @@ export async function googleRegisterService(token) {
     // Verificar el token con Google
     const responseGoogle = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
       headers: {
-        Authorization: `Bearer ${token}`, // Usa el accessToken para esta llamada
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -99,7 +95,6 @@ export async function googleRegisterService(token) {
       return { statusCode: 400, mensaje: "Token inválido" };
     }
 
-    // Verificar si el usuario ya existe en la base de datos
     const usuarioExistente = await UserModel.findOne({ email: userInfo.email });
 
     if (usuarioExistente) {
@@ -119,11 +114,11 @@ export async function googleRegisterService(token) {
       );
 
       if (!existeUsuario) {
-        break; // Sale del bucle si no existe el nombre de usuario
+        break;
       }
     }
 
-    // Hashear la contraseña (userInfo.sub en este caso)
+    // Hashear la contraseña (userInfo.sub en este caso de inicio con Google)
     const userSubString = String(userInfo.sub).trim();
     const contraseniaHasheada = await hashPassword(userSubString);
 
@@ -146,7 +141,6 @@ export async function googleRegisterService(token) {
 
     const response = await postUsuarioService(nuevoUsuarioData);
 
-    // Emitir una sesión o token JWT
     const jwtToken = generateJwtToken(response.nuevoUsuario);
 
     return {

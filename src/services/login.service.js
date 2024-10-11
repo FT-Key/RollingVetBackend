@@ -56,7 +56,7 @@ export async function googleLoginService(token) {
     // Verificar el token con Google
     const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
       headers: {
-        Authorization: `Bearer ${token}`, // Usa el accessToken para esta llamada
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -66,28 +66,22 @@ export async function googleLoginService(token) {
       return { statusCode: 400, msg: "Token inválido" };
     }
 
-    // Buscar el usuario en la base de datos por el email
     const usuarioEncontrado = await UserModel.findOne({ email: userInfo.email })
       .select('+contrasenia')
       .populate('mascotas');
-    // Realiza el populate de las mascotas
-    // Selecciona la contraseña aunque esté marcada con select: false
 
     if (!usuarioEncontrado) {
       return { statusCode: 404, msg: "UsuarioEncontrado no encontrado" };
     }
 
-    // Verificar si el usuario está bloqueado
     if (usuarioEncontrado.bloqueado) {
       return { statusCode: 403, msg: "El usuario está bloqueado" };
     }
 
-    // Verificar que el tipo de registro sea "google"
     if (usuarioEncontrado.tipoRegistro !== "google") {
       return { statusCode: 400, msg: "Error al iniciar sesión, tipo de registro inválido" };
     }
 
-    // Verificar la contraseña
     const userSubString = String(userInfo.sub).trim();
     const userFoundString = String(usuarioEncontrado.contrasenia).trim();
     const contraseñaCoincide = await verifyPassword(
@@ -99,10 +93,9 @@ export async function googleLoginService(token) {
       return { statusCode: 401, msg: "Contraseña incorrecta" };
     }
 
-    // Actualizar el estado de estaActivo a true usando putUsuarioService
     const usuarioData = {
       estaActivo: true,
-      ultimoIngreso: new Date(), // También actualiza la fecha de último ingreso
+      ultimoIngreso: new Date(),
     };
 
     const actualizacion = await putUsuarioService(
@@ -114,7 +107,6 @@ export async function googleLoginService(token) {
       return { statusCode: 500, msg: "Error al actualizar el usuario" };
     }
 
-    // Emitir una sesión o token JWT
     const jwtToken = generateJwtToken(usuarioEncontrado);
 
     return {
@@ -130,14 +122,12 @@ export async function googleLoginService(token) {
 
 export async function closeLoginService(user) {
   try {
-    // Busca y actualiza al usuario en una sola operación
     const usuarioActualizado = await UserModel.findByIdAndUpdate(
       user._id,
-      { login: false }, // Actualiza solo el campo 'login'
-      { new: true } // Devuelve el usuario actualizado
+      { login: false },
+      { new: true }
     );
 
-    // Verifica si el usuario fue encontrado
     if (!usuarioActualizado) {
       return {
         msg: "Usuario no encontrado",

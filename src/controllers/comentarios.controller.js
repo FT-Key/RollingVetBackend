@@ -2,12 +2,12 @@ import {
   getComentariosService,
   postComentarioService,
   deleteComentarioService,
-} from '../services/comentarios.service.js'; // Asegúrate de importar el servicio correcto
+} from '../services/comentarios.service.js';
 
 export const getComentariosController = async (req, res) => {
   try {
-    const filters = req.filters || {}; // Obtener los filtros dinámicos
-    const result = await getComentariosService(req.pagination, filters); // Pasar los filtros al servicio
+    const filters = req.filters || {};
+    const result = await getComentariosService(req.pagination, filters);
 
     return res.status(result.statusCode).json({
       comentarios: result.comentarios,
@@ -22,7 +22,7 @@ export const getComentariosController = async (req, res) => {
 
 export const postComentarioController = async (req, res) => {
   try {
-    const nuevoComentarioData = req.body; // Cambié el nombre de la variable
+    const nuevoComentarioData = req.body;
     const result = await postComentarioService(nuevoComentarioData);
     return res.status(result.statusCode).json({ msg: result.mensaje, nuevoComentario: result.nuevoComentario });
   } catch (error) {
@@ -32,7 +32,7 @@ export const postComentarioController = async (req, res) => {
 
 export const deleteComentarioController = async (req, res) => {
   try {
-    const idComentario = req.params.idComentario; // Asegúrate de que el parámetro es idComentario
+    const idComentario = req.params.idComentario;
 
     const result = await deleteComentarioService(idComentario, req.user);
     return res.status(result.statusCode).json({ msg: result.mensaje });

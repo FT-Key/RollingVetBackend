@@ -1,14 +1,14 @@
-import ComentarioModel from '../models/comentarios.schema.js'; // Asegúrate de importar el modelo de Comentarios
+import ComentarioModel from '../models/comentarios.schema.js';
 
 export const getComentariosService = async (pagination = null, filters = {}) => {
   let comentarios;
-  let totalComentarios = await ComentarioModel.countDocuments(filters); // Contar solo los documentos que coincidan con los filtros
+  let totalComentarios = await ComentarioModel.countDocuments(filters);
 
   if (pagination) {
     const { skip, limit } = pagination;
     comentarios = await ComentarioModel.find(filters)
       .skip(skip)
-      .limit(limit);  // Cambia según sea necesario
+      .limit(limit);
   } else {
     comentarios = await ComentarioModel.find(filters);
   }
@@ -41,7 +41,6 @@ export const postComentarioService = async (nuevoComentarioData) => {
 };
 
 export const deleteComentarioService = async (idComentario, user) => {
-  // Buscar el comentario
   const comentario = await ComentarioModel.findById(idComentario);
   
   if (!comentario) {
@@ -51,7 +50,6 @@ export const deleteComentarioService = async (idComentario, user) => {
     };
   }
   
-  // Verificar si el usuario es admin
   if (user.rol === 'admin') {
     await ComentarioModel.findByIdAndDelete(idComentario);
     return {
@@ -60,7 +58,6 @@ export const deleteComentarioService = async (idComentario, user) => {
     };
   }
   
-  // Si no es admin, retorna un mensaje de error
   return {
     mensaje: "No tienes permiso para eliminar este comentario",
     statusCode: 403,

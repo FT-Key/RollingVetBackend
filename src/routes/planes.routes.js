@@ -9,25 +9,23 @@ import {
 } from '../controllers/planes.controllers.js';
 import { authTokenAndRole } from '../middlewares/auth.js';
 import { paginationMiddleware } from '../utils/pagination.js';
-import PlanModel from '../models/plan.schema.js'; // Modelo de Plan
-
+import PlanModel from '../models/plan.schema.js';
 const router = Router();
 
-/* GET todos los planes con paginación */
+/* GET */
 router.get('/', paginationMiddleware, getPlanesController);
 
-/* GET plan específico */
+/* GET con parámetro */
 router.get('/:idPlan', getPlanController);
 
-/* POST crear un plan (solo admin) */
+/* POST */
 router.post('/', authTokenAndRole('admin'), postPlanController);
 
+/* PUT */
 router.put('/comprarPlan', authTokenAndRole(['cliente', 'admin']), comprarPlanController);
-
-/* PUT actualizar un plan (solo admin) */
 router.put('/:idPlan', authTokenAndRole('admin'), putPlanController);
 
-/* DELETE eliminar un plan (solo admin) */
+/* DELETE */
 router.delete('/:idPlan', authTokenAndRole('admin'), deletePlanController);
 
 export default router;

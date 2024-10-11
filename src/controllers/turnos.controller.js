@@ -2,9 +2,8 @@ import { crearTurnosSemanalesService, obtenerTurnosService, solicitarTurnoServic
 
 export const obtenerTurnosController = async (req, res) => {
   try {
-    // Obtener los filtros dinámicos que fueron procesados por el middleware
-    const filters = req.filters || {}; // Filtros que se pueden pasar por query params
-    const result = await obtenerTurnosService(req.pagination, filters, req.user); // Pasar paginación, filtros y el usuario autenticado al servicio
+    const filters = req.filters || {};
+    const result = await obtenerTurnosService(req.pagination, filters, req.user);
 
     return res.status(200).json({
       fechaTurnos: result.fechaTurnos,
@@ -23,7 +22,6 @@ export const obtenerTurnoController = async (req, res) => {
     const { fecha } = req.params;
 
     if (fecha) {
-      // Obtener turnos para una fecha específica
       const turnos = await obtenerTurnoService(fecha, req.user);
       if (!turnos) {
         return res.status(404).json({ message: 'No se encontraron turnos para la fecha especificada.' });
@@ -40,27 +38,22 @@ export const obtenerTurnoController = async (req, res) => {
 
 export const listaTurnosController = async (req, res) => {
   try {
-    // Obtener el ID del usuario desde el token o la solicitud
-    const userId = req.user._id; // Asegúrate de que el ID del usuario esté disponible en req.user
+    const userId = req.user._id;
 
     if (!userId) {
       return res.status(400).json({ message: 'ID de usuario no proporcionado.' });
     }
 
-    // Llamar al servicio para obtener los turnos del usuario
     const turnos = await listaTurnosService(userId);
 
-    // Si el valor es null, undefined o no es un array, es un error
     if (!Array.isArray(turnos)) {
       return res.status(500).json({ message: 'Error al obtener los turnos del usuario.' });
     }
 
-    // Si es un array vacío, no es un error
     if (turnos.length === 0) {
       return res.status(200).json({ message: 'No tiene turnos.' });
     }
 
-    // Enviar la respuesta con los turnos
     res.status(200).json(turnos);
   } catch (error) {
     console.error('Error al obtener los turnos del usuario:', error);
@@ -70,10 +63,8 @@ export const listaTurnosController = async (req, res) => {
 
 export const crearTurnosSemanalesController = async (req, res) => {
   try {
-    // Obtener el ID del usuario autenticado (admin que está creando los turnos)
     const creadorId = req.user._id;
 
-    // Delegar la creación de turnos semanales al servicio
     await crearTurnosSemanalesService(creadorId);
 
     res.status(201).json({ message: 'Turnos semanales creados con éxito' });
@@ -85,26 +76,20 @@ export const crearTurnosSemanalesController = async (req, res) => {
 
 export const solicitarTurnoController = async (req, res) => {
   try {
-    // Obtener los datos de la solicitud: fecha, hora, tipoAtencion y descripcion
     const { fecha, hora, tipoAtencion, descripcion } = req.body;
 
-    // Verificar que los datos necesarios se proporcionen
     if (!fecha || !hora || !tipoAtencion) {
       return res.status(400).json({ message: 'La fecha, hora y tipo de atención son requeridos.' });
     }
 
-    // Obtener el ID del usuario autenticado (cliente que solicita el turno)
     const usuarioId = req.user._id;
 
-    // Llamar al servicio para solicitar el turno
     const turnoSolicitado = await solicitarTurnoService(fecha, hora, usuarioId, tipoAtencion, descripcion);
 
-    // Verificar si el servicio devolvió un error (ya tiene turno)
     if (turnoSolicitado?.error) {
       return res.status(400).json({ message: turnoSolicitado.error });
     }
 
-    // Verificar si el turno fue solicitado con éxito
     if (turnoSolicitado) {
       return res.status(200).json({ message: 'Turno solicitado con éxito', turno: turnoSolicitado });
     } else {
@@ -118,12 +103,11 @@ export const solicitarTurnoController = async (req, res) => {
 
 export const cancelarTurnoController = async (req, res) => {
   try {
-    const { turnoId } = req.body;  // Asegúrate de que el ID del turno se envíe desde el frontend
+    const { turnoId } = req.body;
     if (!turnoId) {
       return res.status(400).json({ error: 'ID de turno requerido.' });
     }
 
-    // Llama al servicio para cancelar el turno
     const turnoCancelado = await cancelarTurnoService(turnoId, req.user);
 
     if (!turnoCancelado) {
@@ -138,21 +122,17 @@ export const cancelarTurnoController = async (req, res) => {
 
 export const modificarTurnoController = async (req, res) => {
   try {
-    const { turnoId } = req.params; // Obtener el turnoId de los parámetros
-    const actualizaciones = req.body; // Obtener las actualizaciones del body
+    const { turnoId } = req.params;
+    const actualizaciones = req.body;
 
-    // Validar los datos de entrada
     if (!turnoId || !actualizaciones) {
       return res.status(400).json({ error: 'Faltan datos necesarios en la solicitud' });
     }
 
-    // Llamar al servicio para modificar el turno
     const fechaTurnoActualizada = await modificarTurnoService(turnoId, actualizaciones);
 
-    // Enviar la respuesta con los datos actualizados
     res.status(200).json(fechaTurnoActualizada);
   } catch (error) {
-    // Manejar errores
     res.status(500).json({ error: error.message });
   }
 };
