@@ -100,7 +100,7 @@ const UsuarioSchema = new Schema({
   idCarrito: { type: mongoose.Schema.Types.ObjectId, ref: "cart" },
   idFavoritos: { type: mongoose.Schema.Types.ObjectId, ref: "fav" },
   mascotas: [{ type: mongoose.Schema.Types.ObjectId, ref: "Animal" }],
-});
+}, {timestamps: true});
 
 const Usuario = model("Usuario", UsuarioSchema);
 

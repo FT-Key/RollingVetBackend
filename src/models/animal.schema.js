@@ -40,7 +40,7 @@ const AnimalSchema = new Schema({
   creadoPor: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario", default: null },
   creadoEn: { type: Date, default: Date.now },
   actualizadoEn: { type: Date },
-});
+}, {timestamps: true});
 
 const Animal = model("Animal", AnimalSchema);
 

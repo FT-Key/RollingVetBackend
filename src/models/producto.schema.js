@@ -17,7 +17,7 @@ const productoSchema = new Schema({
   garantia: { type: String, required: true },
   descuento: { type: Number, required: true, min: 0, max: 100 },
   bloqueado: { type: Boolean, required: true }
-});
+}, {timestamps: true});
 
 const Producto = _model('Producto', productoSchema);
 
